@@ -5,6 +5,11 @@ export default {
     extend: {
       colors: {
         primary: "#3b82f6",
+        "primary-dark": "#2563eb",
+        warning: "#facc15",
+        "warning-dark": "#eab308",
+        danger: "#dc2626",
+        "danger-dark": "#991b1b",
       },
     },
   },

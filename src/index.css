@@ -1,3 +1,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body::-webkit-scrollbar {
+  width: 0;
+}
+
+h1 {
+  @apply mb-5 text-3xl font-semibold text-primary;
+}
+
+/* Buttons */
+.btn {
+  @apply px-5 py-2 text-base transition-all rounded-md;
+}
+
+.btn-primary {
+  @apply text-white btn bg-primary hover:bg-primary-dark;
+}
+
+.btn-danger {
+  @apply text-white btn bg-danger hover:bg-danger-dark;
+}
+
+.btn-warning {
+  @apply text-black btn bg-warning hover:bg-warning-dark;
+}
+
+.btn-text {
+  @apply flex items-center gap-2 px-3 py-2 text-base font-semibold transition-all hover:text-white;
+}
+
+.btn-text-primary {
+  @apply btn-text text-primary hover:bg-primary;
+}
+
+.btn-text-danger {
+  @apply btn-text text-danger hover:bg-danger;
+}
+
+.btn-text-warning {
+  @apply btn-text text-warning hover:bg-warning;
+}
+/* Tables */
+.table-wrapper {
+  @apply relative overflow-x-auto shadow-md;
+}
+
+table {
+  @apply w-full text-sm text-left text-gray-500;
+}
+
+thead {
+  @apply text-xs text-gray-700 uppercase;
+}
+
+thead > tr {
+  @apply bg-gray-200;
+}
+
+th {
+  @apply px-6 py-3;
+}
+
+tr {
+  @apply bg-white border-b last-of-type:border-b-0;
+}
+
+td {
+  @apply px-6 py-4;
+}
+
+td:first-of-type {
+  @apply w-full font-medium text-gray-900 whitespace-nowrap md:w-auto;
+}
