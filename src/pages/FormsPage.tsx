@@ -10,18 +10,21 @@ const forms: Form[] = [
     title: "My form",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente reprehenderit harum recusandae quasi, ullam aperiam numquam fugiat iste alias corrupti! Laudantium eum voluptas quae soluta aut quibusdam iste similique ratione?",
+    sections: [],
   },
   {
     id: "2",
     title: "Quiz form",
     description:
       "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Modi, soluta?",
+    sections: [],
   },
   {
     id: "3",
     title: "Feedback form",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla atque qui nostrum debitis aliquam earum a aliquid placeat eaque, eum quia impedit praesentium velit corrupti.",
+    sections: [],
   },
 ];
 
@@ -60,7 +63,7 @@ const FormsPage = () => {
     <div>
       <h1>Forms</h1>
 
-      <Link to="/forms/new">
+      <Link to="/forms/edit">
         <button className="btn-primary">Create new form</button>
       </Link>
 
