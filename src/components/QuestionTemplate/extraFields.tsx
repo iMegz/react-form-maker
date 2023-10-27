@@ -36,7 +36,7 @@ export const RequiredCheckbox = ({ onChange, value, id }: ExtraFieldProps) => {
         checked={value as boolean}
         onChange={onChange("required")}
       />
-      <label htmlFor="required">Required</label>
+      <label htmlFor={id + "_required"}>Required</label>
     </div>
   );
 };
@@ -51,7 +51,7 @@ export const OtherCheckbox = ({ onChange, value, id }: ExtraFieldProps) => {
         checked={value as boolean}
         onChange={onChange("other")}
       />
-      <label htmlFor="other">Other</label>
+      <label htmlFor={id + "_other"}>Other</label>
     </div>
   );
 };
@@ -60,7 +60,7 @@ export const DateTypeSelect = ({ onChange, value, id }: ExtraFieldProps) => {
   const selectedindex = dateTypes.findIndex((v) => v.value === value);
   return (
     <div className="form-group">
-      <label htmlFor="question">Field type</label>
+      <label htmlFor={id + "_dateType"}>Field type</label>
       <Select
         id={id + "_dateType"}
         items={dateTypes}
@@ -79,7 +79,7 @@ export const MaxChoicesInput = ({
 }: ExtraFieldProps & { max: number }) => {
   return (
     <div className="form-group">
-      <label htmlFor="maxChoices">Max choices</label>
+      <label htmlFor={id + "_maxChoices"}>Max choices</label>
       <input
         id={id + "_maxChoices"}
         type="number"

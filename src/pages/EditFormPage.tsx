@@ -30,12 +30,19 @@ const EditFormPage = () => {
     dispatch({ type: "CHANGE_COVER_IMG", payload });
   };
 
+  const handleSetPublic = ({
+    target: { checked: payload },
+  }: ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: "SET_PUBLIC", payload });
+  };
+
   const handleSaveForm = () => {
     const validation = NewFormSchema.safeParse(state);
     if (validation.success) {
       // Send to backend
       setErrors(undefined);
       console.log(validation.data);
+      console.log(JSON.stringify(validation.data));
     } else {
       const errors = validation.error.flatten().fieldErrors;
       setErrors(errors);
@@ -73,6 +80,16 @@ const EditFormPage = () => {
             info="Recomended size 820 x 312"
             onChange={handleChangeCoverImg}
           />
+          <div className="flex gap-2">
+            <input
+              type="checkbox"
+              id="public"
+              className="accent-primary"
+              checked={state.isPublic}
+              onChange={handleSetPublic}
+            />
+            <label htmlFor="public">Public</label>
+          </div>
         </div>
       </section>
 

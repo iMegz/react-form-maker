@@ -64,4 +64,5 @@ interface NewForm {
 
 interface Form extends NewForm {
   id: string;
+  coverImg: string;
 }
