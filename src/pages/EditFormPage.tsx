@@ -1,20 +1,46 @@
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { useReducer } from "react";
+import { PlusOutlined } from "@ant-design/icons";
+import { ChangeEvent, useReducer, useState } from "react";
 import { initialState, reducer } from "../reducers/formReducer";
 import FormSection from "../components/FormSection";
-
-const form: NewForm = {
-  title: "",
-  description: "",
-  coverImg: undefined,
-  isPublic: false,
-  sections: [],
-};
+import FileUpload from "../components/FileUpload";
+import { NewFormSchema } from "../validators/formValidators";
+import FormError from "../components/FormError";
 
 const EditFormPage = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [errors, setErrors] = useState<any>();
 
-  const handleAddSection = () => dispatch({ type: "ADD_SECTION" });
+  const handleAddSection = () => {
+    dispatch({ type: "ADD_SECTION" });
+  };
+
+  const handleChangeTitle = ({
+    target: { value: payload },
+  }: ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: "CHANGE_TITLE", payload });
+  };
+
+  const handleChangeDescription = ({
+    target: { value: payload },
+  }: ChangeEvent<HTMLTextAreaElement>) => {
+    dispatch({ type: "CHANGE_DESCRIPTION", payload });
+  };
+
+  const handleChangeCoverImg = (payload: File | null) => {
+    dispatch({ type: "CHANGE_COVER_IMG", payload });
+  };
+
+  const handleSaveForm = () => {
+    const validation = NewFormSchema.safeParse(state);
+    if (validation.success) {
+      // Send to backend
+      setErrors(undefined);
+      console.log(validation.data);
+    } else {
+      const errors = validation.error.flatten().fieldErrors;
+      setErrors(errors);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6 w-fit">
@@ -24,7 +50,8 @@ const EditFormPage = () => {
           <input
             type="text"
             placeholder="Form title"
-            defaultValue={form.title}
+            value={state.title}
+            onChange={handleChangeTitle}
           />
         </div>
         <div className="section-body">
@@ -33,23 +60,19 @@ const EditFormPage = () => {
               rows={3}
               className="resize-none"
               placeholder="Form description"
+              value={state.description}
+              onChange={handleChangeDescription}
             />
           </div>
 
           <hr />
 
-          <label className="file-upload">
-            <input
-              type="file"
-              className="hidden"
-              accept=".jpg,.jpeg,.png,.svg"
-            />
-            <UploadOutlined className="text-xl" />
-            <span>Cover image</span>
-            <span className="text-sm text-gray-700">
-              Recomended size 820 x 312
-            </span>
-          </label>
+          <FileUpload
+            title="Cover image"
+            accept=".jpg,.jpeg,.png,.svg"
+            info="Recomended size 820 x 312"
+            onChange={handleChangeCoverImg}
+          />
         </div>
       </section>
 
@@ -60,6 +83,7 @@ const EditFormPage = () => {
           key={id}
           id={id}
           questions={questions}
+          canDelete={state.sections.length > 1}
         />
       ))}
 
@@ -69,6 +93,11 @@ const EditFormPage = () => {
       >
         <PlusOutlined />
         Add new section
+      </button>
+      {/* Errors */}
+      {errors && <FormError<NewForm> errors={errors} />}
+      <button className="btn-primary w-fit" onClick={handleSaveForm}>
+        Save
       </button>
     </div>
   );

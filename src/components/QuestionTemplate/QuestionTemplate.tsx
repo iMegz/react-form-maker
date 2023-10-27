@@ -9,25 +9,59 @@ import {
   OtherCheckbox,
   RequiredCheckbox,
 } from "./extraFields";
+import { QuestionSchema } from "../../validators/formValidators";
+import { EditOutlined } from "@ant-design/icons";
+import FormError from "../FormError";
 
 const MAX_CHOICES = 4;
 
 interface QuestionTemplateProps {
   question: Question;
   onDelete: () => void;
+  onSave: (question: Question) => void;
+  editMode?: boolean;
+  canDelete: boolean;
 }
+
+type Edit = {
+  mode: boolean;
+  type: boolean;
+};
 
 const types = Object.entries(QuestionType).map((value) => ({
   label: value[1],
   value: value[0],
 }));
 
-const QuestionTemplate = ({ question, onDelete }: QuestionTemplateProps) => {
+const QuestionTemplate = ({
+  question,
+  onDelete,
+  onSave,
+  editMode,
+  canDelete,
+}: QuestionTemplateProps) => {
   const [q, setQ] = useState<Question>(question);
+  const [edit, setEdit] = useState<Edit>({
+    mode: editMode ?? true,
+    type: editMode ?? true,
+  });
   const { onChange, onChoiceAction } = useQuestion(setQ);
-  const id = question.id;
+  const [errors, setErrors] = useState<any>();
 
+  const id = question.id;
   const extraFieldsProps = { onChange, id };
+
+  function handleOnSave() {
+    const validation = QuestionSchema.safeParse(q);
+    if (validation.success) {
+      setEdit({ mode: false, type: false });
+      setErrors(undefined);
+      onSave(validation.data as Question);
+    } else {
+      const errors = validation.error.flatten().fieldErrors;
+      setErrors(errors);
+    }
+  }
 
   function renderExtrafields() {
     switch (q.type) {
@@ -73,33 +107,78 @@ const QuestionTemplate = ({ question, onDelete }: QuestionTemplateProps) => {
     }
   }
 
+  function renderTypeSelect() {
+    if (edit.type)
+      return (
+        <div className="form-group">
+          <label htmlFor="question">Type</label>
+          <Select items={types} selectedIndex={0} onSelect={onChange("type")} />
+        </div>
+      );
+  }
+
+  function renderEditMode() {
+    if (edit.mode)
+      return (
+        <>
+          {/* Errors */}
+          {errors && <FormError<Question> errors={errors} />}
+
+          {/* Type select input */}
+          {renderTypeSelect()}
+
+          {/* Question input */}
+          <div className="form-group">
+            <label htmlFor="question">Question</label>
+            <textarea
+              rows={2}
+              id="question"
+              onChange={onChange("question")}
+              value={q.question}
+              className="resize-none"
+            />
+          </div>
+
+          {/* Extra fields */}
+          {renderExtrafields()}
+
+          {/* Save and cancel buttons */}
+          <div className="flex items-center justify-end gap-3">
+            <button
+              type="submit"
+              className="btn-primary"
+              onClick={handleOnSave}
+            >
+              Save
+            </button>
+            {canDelete && (
+              <button className="btn-danger" onClick={onDelete}>
+                Delete
+              </button>
+            )}
+          </div>
+        </>
+      );
+
+    return (
+      <div className="flex flex-col gap-2">
+        <span className="text-gray-400">{QuestionType[q.type]}</span>
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold">{q.question}</h2>
+          <button
+            className="btn-text"
+            onClick={() => setEdit((prev) => ({ ...prev, mode: true }))}
+          >
+            <EditOutlined />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4 pb-3 border-b border-b-gray-300 animate-fade-in">
-      {/* Type select input */}
-      <div className="form-group">
-        <label htmlFor="question">Type</label>
-        <Select items={types} selectedIndex={0} onSelect={onChange("type")} />
-      </div>
-
-      {/* Question input */}
-      <div className="form-group">
-        <label htmlFor="question">Question</label>
-        <input
-          id="question"
-          onChange={onChange("question")}
-          value={q.question}
-        />
-      </div>
-
-      {renderExtrafields()}
-
-      {/* Save and cancel buttons */}
-      <div className="flex items-center justify-end gap-3">
-        <button className="btn-primary">Save</button>
-        <button className="btn-danger" onClick={onDelete}>
-          Cancel
-        </button>
-      </div>
+      {renderEditMode()}
     </div>
   );
 };

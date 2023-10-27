@@ -100,10 +100,6 @@ td:first-of-type {
   @apply flex flex-col gap-2 px-3 py-3 bg-gray-50;
 }
 
-.file-upload {
-  @apply bg-white cursor-pointer flex flex-col w-full h-[183px] border-2 border-gray-500 items-center justify-center border-dashed rounded-md;
-}
-
 .form-group label {
   @apply inline-block mb-1 text-base font-semibold;
 }

@@ -1,7 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
 
 type QuestionSetState = Dispatch<SetStateAction<Question>>;
-type InputChangeEvent = React.ChangeEvent<HTMLInputElement>;
+type InputChangeEvent = React.ChangeEvent<
+  HTMLInputElement & HTMLTextAreaElement
+>;
 type ChoiceAction = "add" | "del" | "edit";
 
 interface ExcludeField {

@@ -39,7 +39,7 @@ const Select = ({ items, title, selectedIndex, onSelect, id }: SelectProps) => {
     if (!expand) return null;
 
     return (
-      <div className="absolute left-[-0.5%] grid w-[101%] top-14 animate-expand  ">
+      <div className="absolute left-[-0.5%] grid w-[101%] top-14 animate-expand z-10">
         <ul className="flex flex-col w-full gap-2 p-2 overflow-hidden bg-white rounded-lg shadow-xl ">
           {items?.map((item, i) => (
             <li

@@ -1,16 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Action } from "../reducers/formReducer";
 import QuestionTemplate from "./QuestionTemplate/QuestionTemplate";
 import Modal from "./Modal";
 import { createPortal } from "react-dom";
+
 interface FormSectionProps {
   questions: Question[];
   title: string;
   id: string;
   dispatch: React.Dispatch<Action>;
+  canDelete: boolean;
 }
 
-const FormSection = ({ questions, title, id, dispatch }: FormSectionProps) => {
+const FormSection = ({
+  questions,
+  title,
+  id,
+  dispatch,
+  canDelete,
+}: FormSectionProps) => {
   const [modal, setModal] = useState<React.ReactNode | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -42,7 +50,11 @@ const FormSection = ({ questions, title, id, dispatch }: FormSectionProps) => {
     );
   }
 
-  const handleChangeTitle = () => {};
+  const handleChangeTitle = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const payload = { title: target.value, sectionId: id };
+    dispatch({ type: "CHANGE_SECTION_TITLE", payload });
+  };
+
   const handleAddQuestion = () => {
     dispatch({ type: "ADD_QUESTION", payload: id });
   };
@@ -51,6 +63,13 @@ const FormSection = ({ questions, title, id, dispatch }: FormSectionProps) => {
     return () => {
       const payload = { sectionId: id, questionId };
       dispatch({ type: "DEL_QUESTION", payload });
+    };
+  };
+
+  const handleOnSave = (questionId: string) => {
+    return (question: Question) => {
+      const payload = { sectionId: id, questionId, question };
+      dispatch({ type: "SAVE_QUESTION", payload });
     };
   };
 
@@ -72,19 +91,23 @@ const FormSection = ({ questions, title, id, dispatch }: FormSectionProps) => {
           <QuestionTemplate
             key={question.id}
             onDelete={handleDelQuestion(question.id)}
+            onSave={handleOnSave(question.id)}
             question={question}
+            canDelete={questions.length > 1}
           />
         ))}
 
         <button onClick={handleAddQuestion} className="btn-primary">
           Add new question
         </button>
-        <button
-          onClick={() => setModal(<DeleteModal />)}
-          className="btn-danger"
-        >
-          Delete Section
-        </button>
+        {canDelete && (
+          <button
+            onClick={() => setModal(<DeleteModal />)}
+            className="btn-danger"
+          >
+            Delete Section
+          </button>
+        )}
       </div>
       <div ref={ref} />
       {modal && createPortal(modal, document.querySelector("#modal")!)}

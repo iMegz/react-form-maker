@@ -1,3 +1,10 @@
+export enum DefaultQuestionType {
+  SHORT_ANSWER = "Short answer",
+  PARAGRAPH = "Paragraph",
+  EMAIL = "Email",
+  NUMBER = "Number",
+}
+
 export enum QuestionType {
   SHORT_ANSWER = "Short answer",
   PARAGRAPH = "Paragraph",

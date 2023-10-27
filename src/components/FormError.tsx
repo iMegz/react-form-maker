@@ -1,8 +1,10 @@
-import { FieldErrors } from "react-hook-form";
+type ZodError<T> = { _errors: string[] } & {
+  [K in keyof T]: string[];
+};
 
-const FormError = ({ errors }: { errors: FieldErrors }) => {
+const FormError = <T,>({ errors }: { errors?: ZodError<T> }) => {
+  if (!errors) return null;
   const fields = Object.keys(errors) as (keyof typeof errors)[];
-  if (fields.length === 0) return null;
 
   return (
     <div
@@ -11,7 +13,7 @@ const FormError = ({ errors }: { errors: FieldErrors }) => {
     >
       <ul className="pl-4 list-disc">
         {fields.map((field, i) => (
-          <li key={i}>{errors[field]?.message as string}</li>
+          <li key={i}>{errors[field][0] as string}</li>
         ))}
       </ul>
     </div>

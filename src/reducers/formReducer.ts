@@ -7,9 +7,11 @@ export type Actions =
   | "SET_PUBLIC"
   | "ADD_SECTION"
   | "DEL_SECTION"
+  | "CHANGE_SECTION_TITLE"
   | "ADD_QUESTION"
   | "DEL_QUESTION"
   | "SAVE_QUESTION";
+
 export type Action = { type: Actions; payload?: any };
 
 export const initialState: NewForm = {
@@ -19,6 +21,14 @@ export const initialState: NewForm = {
   isPublic: false,
   sections: [],
 };
+
+export function genNewQuestion() {
+  return {
+    id: uuidv4(),
+    type: "SHORT_ANSWER",
+    question: "",
+  } as Question;
+}
 
 type QuestionIndex = {
   sectionId: string;
@@ -45,7 +55,7 @@ export function reducer(state: NewForm, { type, payload }: Action): NewForm {
     }
 
     case "CHANGE_COVER_IMG": {
-      const coverImg = payload as File;
+      const coverImg = (payload as File) || undefined;
       return { ...state, coverImg };
     }
 
@@ -57,22 +67,30 @@ export function reducer(state: NewForm, { type, payload }: Action): NewForm {
     // Sections
     case "ADD_SECTION": {
       const newState = { ...state };
-      const newQuestion: Question = {
-        id: uuidv4(),
-        type: "SHORT_ANSWER",
-        question: "",
-      };
       newState.sections = [
         ...state.sections,
-        { id: uuidv4(), title: "", questions: [newQuestion] },
+        { id: uuidv4(), title: "", questions: [genNewQuestion()] },
       ];
       return newState;
     }
 
     case "DEL_SECTION": {
+      if (state.sections.length < 2) return state;
       const newState = { ...state };
       const sectionId = payload as string;
       newState.sections = state.sections.filter(({ id }) => id !== sectionId);
+      return newState;
+    }
+
+    case "CHANGE_SECTION_TITLE": {
+      const newState = { ...state };
+      const { title, sectionId } = payload as {
+        title: string;
+        sectionId: string;
+      };
+      newState.sections = state.sections.map((section) => {
+        return section.id === sectionId ? { ...section, title } : section;
+      });
       return newState;
     }
 
@@ -81,17 +99,11 @@ export function reducer(state: NewForm, { type, payload }: Action): NewForm {
       const newState = { ...state };
       const sectionId = payload as string;
 
-      const newQuestion: Question = {
-        id: uuidv4(),
-        type: "SHORT_ANSWER",
-        question: "",
-      };
-
       newState.sections = state.sections.map((section) => {
         if (section.id !== sectionId) return section;
         return {
           ...section,
-          questions: [...section.questions, newQuestion],
+          questions: [...section.questions, genNewQuestion()],
         };
       });
 
@@ -101,16 +113,15 @@ export function reducer(state: NewForm, { type, payload }: Action): NewForm {
     case "DEL_QUESTION": {
       const newState = { ...state };
       const { sectionId, questionId }: QuestionIndex = payload;
-      console.log(questionId);
 
       newState.sections = state.sections.map((section) => {
         if (section.id !== sectionId) return section;
-        console.log(section);
-
-        return {
-          ...section,
-          questions: section.questions.filter(({ id }) => id !== questionId),
-        };
+        if (section.questions.length > 1) {
+          return {
+            ...section,
+            questions: section.questions.filter(({ id }) => id !== questionId),
+          };
+        } else return section;
       });
 
       return newState;
