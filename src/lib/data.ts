@@ -75,3 +75,30 @@ export const form: Form = {
   coverImg:
     "https://i0.wp.com/plaindesign.com.au/wp-content/uploads/2020/01/Cover-Photo-for-Facebook_-820-x-312-px.jpg?fit=820%2C312&ssl=1",
 };
+
+export const forms: Form[] = [
+  {
+    id: "1",
+    title: "My form",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente reprehenderit harum recusandae quasi, ullam aperiam numquam fugiat iste alias corrupti! Laudantium eum voluptas quae soluta aut quibusdam iste similique ratione?",
+    sections: [],
+    coverImg: "",
+  },
+  {
+    id: "2",
+    title: "Quiz form",
+    description:
+      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Modi, soluta?",
+    sections: [],
+    coverImg: "",
+  },
+  {
+    id: "3",
+    title: "Feedback form",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla atque qui nostrum debitis aliquam earum a aliquid placeat eaque, eum quia impedit praesentium velit corrupti.",
+    sections: [],
+    coverImg: "",
+  },
+];

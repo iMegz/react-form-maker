@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Navbar from "./components/Navbar";
 import FormsPage from "./pages/FormsPage";
 import Dashboardpage from "./pages/Dashboardpage";
 import SettingsPage from "./pages/SettingsPage";
@@ -18,6 +17,7 @@ function App() {
           <Route path="forms">
             <Route index element={<FormsPage />} />
             <Route path="edit/:id?" element={<EditFormPage />} />
+            <Route path="preview/:id?" element={<FormPage preview />} />
           </Route>
           <Route path="settings" element={<SettingsPage />} />
         </Route>

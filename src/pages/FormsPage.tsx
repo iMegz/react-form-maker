@@ -1,32 +1,14 @@
-import { DeleteFilled, EditFilled, EyeFilled } from "@ant-design/icons";
+import {
+  DeleteFilled,
+  EditFilled,
+  EyeFilled,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { ReactNode, useState } from "react";
 import Modal from "../components/Modal";
 import { createPortal } from "react-dom";
-
-const forms: Form[] = [
-  {
-    id: "1",
-    title: "My form",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente reprehenderit harum recusandae quasi, ullam aperiam numquam fugiat iste alias corrupti! Laudantium eum voluptas quae soluta aut quibusdam iste similique ratione?",
-    sections: [],
-  },
-  {
-    id: "2",
-    title: "Quiz form",
-    description:
-      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Modi, soluta?",
-    sections: [],
-  },
-  {
-    id: "3",
-    title: "Feedback form",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla atque qui nostrum debitis aliquam earum a aliquid placeat eaque, eum quia impedit praesentium velit corrupti.",
-    sections: [],
-  },
-];
+import { forms } from "../lib/data";
 
 const FormsPage = () => {
   const [modal, setModal] = useState<ReactNode | null>(null);
@@ -72,7 +54,7 @@ const FormsPage = () => {
           <thead>
             <tr>
               <th scope="col">Form title</th>
-              <th scope="col" className="hidden md:table-cell">
+              <th scope="col" className="hidden lg:table-cell">
                 Description
               </th>
               <th scope="col">Actions</th>
@@ -85,7 +67,7 @@ const FormsPage = () => {
                   <Link to={"/forms/edit/" + id}>{title}</Link>
                 </td>
 
-                <td className="hidden md:table-cell ">
+                <td className="hidden lg:table-cell ">
                   <p className="line-clamp-2">{description}</p>
                 </td>
 
@@ -94,6 +76,13 @@ const FormsPage = () => {
                     <button className="btn-text-primary">
                       <EyeFilled />
                       <span className="hidden md:inline">Preview</span>
+                    </button>
+                  </Link>
+
+                  <Link to={"/forms/responses/" + id}>
+                    <button className="btn-text">
+                      <UnorderedListOutlined />
+                      <span className="hidden md:inline">Responses</span>
                     </button>
                   </Link>
 

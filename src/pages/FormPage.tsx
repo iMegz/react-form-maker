@@ -1,9 +1,16 @@
 import formFields from "../components/FormFields";
 import { form } from "../lib/data";
 
-const FormPage = () => {
+const FormPage = ({ preview }: { preview?: boolean }) => {
+  const Container = ({ children }: React.PropsWithChildren) => {
+    if (preview) return <div className="form-holder">{children}</div>;
+    return (
+      <form className="min-h-screen py-8 m-auto form-holder">{children}</form>
+    );
+  };
+
   return (
-    <form className="min-h-screen py-8 m-auto form-holder">
+    <Container>
       {/* Form info section */}
       <section className="form-section">
         <div className="section-header">
@@ -48,10 +55,12 @@ const FormPage = () => {
           </div>
         </section>
       ))}
-      <button type="submit" className="btn-primary w-fit">
-        Submit
-      </button>
-    </form>
+      {!preview && (
+        <button type="submit" className="btn-primary w-fit">
+          Submit
+        </button>
+      )}
+    </Container>
   );
 };
 
