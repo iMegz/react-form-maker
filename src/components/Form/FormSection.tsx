@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Action } from "../reducers/formReducer";
-import QuestionTemplate from "./QuestionTemplate/QuestionTemplate";
-import Modal from "./Modal";
+import { Action } from "../../reducers/formReducer";
+import QuestionTemplate from "../QuestionTemplate/QuestionTemplate";
+import Modal from "../Modal";
 import { createPortal } from "react-dom";
 
 interface FormSectionProps {

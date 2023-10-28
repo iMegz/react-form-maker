@@ -74,3 +74,17 @@ interface Form extends NewForm {
   id: string;
   coverImg: string;
 }
+
+// Form application
+interface ApplicationQuestion {
+  type: QuestionType;
+  answer: string | string[] | number | Date;
+}
+
+interface ApplicationSection {
+  question: ApplicationQuestion[];
+}
+
+interface ApplicationForm {
+  sections: ApplicationSection[];
+}

@@ -1,10 +1,10 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { ChangeEvent, useReducer, useState } from "react";
 import { initialState, reducer } from "../reducers/formReducer";
-import FormSection from "../components/FormSection";
+import FormSection from "../components/Form/FormSection";
 import FileUpload from "../components/FileUpload";
 import { NewFormSchema } from "../validators/formValidators";
-import FormError from "../components/FormError";
+import FormError from "../components/Form/FormError";
 
 const EditFormPage = () => {
   const [state, dispatch] = useReducer(reducer, initialState);

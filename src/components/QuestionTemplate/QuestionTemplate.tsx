@@ -1,7 +1,7 @@
 import Select from "../Select";
 import { QuestionType } from "../../lib/enums";
 import { useState } from "react";
-import { useQuestion } from "./useQuestion";
+import { useQuestion } from "../../hooks/useQuestion";
 import {
   ChoicesInputs,
   DateTypeSelect,
@@ -11,7 +11,7 @@ import {
 } from "./extraFields";
 import { QuestionSchema } from "../../validators/formValidators";
 import { EditOutlined } from "@ant-design/icons";
-import FormError from "../FormError";
+import FormError from "../Form/FormError";
 
 const MAX_CHOICES = 4;
 

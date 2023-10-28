@@ -1,7 +1,7 @@
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { DateType } from "../../lib/enums";
 import Select from "../Select";
-import { OnChange, OnChoiceAction } from "./useQuestion";
+import { OnChange, OnChoiceAction } from "../../hooks/useQuestion";
 
 type ExtraFieldProps = {
   id: string | number;

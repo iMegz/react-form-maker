@@ -1,4 +1,4 @@
-import formFields from "../components/FormFields";
+import formFields from "../components/Form/FormFields";
 import { form } from "../lib/data";
 
 const FormPage = ({ preview }: { preview?: boolean }) => {

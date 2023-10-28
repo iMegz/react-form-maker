@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import Select from "./Select";
+import Select from "../Select";
 
 interface CheckedValue {
   checked: { [key: string]: boolean };
