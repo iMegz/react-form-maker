@@ -39,13 +39,18 @@ const Select = ({ items, title, selectedIndex, onSelect, id }: SelectProps) => {
     if (!expand) return null;
 
     return (
-      <div className="absolute left-[-0.5%] grid w-[101%] top-14 animate-expand z-10">
-        <ul className="flex flex-col w-full gap-2 p-2 overflow-hidden bg-white rounded-lg shadow-xl ">
+      <div className="absolute left-[-0.5%] grid w-[101%] top-14 animate-expand z-50">
+        <ul
+          role="listbox"
+          title={title}
+          className="flex flex-col w-full gap-2 p-2 overflow-hidden bg-white rounded-lg shadow-xl "
+        >
           {items?.map((item, i) => (
             <li
               onClick={select(i)}
               className="p-1 capitalize transition-all select-none hover:bg-gray-200"
               key={item.value}
+              role="option"
             >
               {item.label}
             </li>
@@ -69,7 +74,6 @@ const Select = ({ items, title, selectedIndex, onSelect, id }: SelectProps) => {
       ref={ref}
       onClick={toggleDropdown}
       id={id}
-      role="listbox"
     >
       <span className="capitalize">{selection?.label || title}</span>
       {renderArrow()}

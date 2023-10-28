@@ -50,7 +50,7 @@ const FormsPage = () => {
       </Link>
 
       <div className="mt-6 table-wrapper">
-        <table>
+        <table className="overflow-x-auto">
           <thead>
             <tr>
               <th scope="col">Form title</th>
@@ -63,7 +63,7 @@ const FormsPage = () => {
           <tbody>
             {forms.map(({ id, title, description }) => (
               <tr key={id}>
-                <td>
+                <td className="text-xs md:text-base">
                   <Link to={"/forms/edit/" + id}>{title}</Link>
                 </td>
 
@@ -71,7 +71,7 @@ const FormsPage = () => {
                   <p className="line-clamp-2">{description}</p>
                 </td>
 
-                <td className="flex gap-2">
+                <td className="flex gap-0 md:gap-2">
                   <Link to={"/forms/preview/" + id}>
                     <button className="btn-text-primary">
                       <EyeFilled />

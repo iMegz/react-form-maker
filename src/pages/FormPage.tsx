@@ -1,16 +1,18 @@
 import formFields from "../components/Form/FormFields";
+import useForm from "../hooks/useForm";
 import { form } from "../lib/data";
 
 const FormPage = ({ preview }: { preview?: boolean }) => {
-  const Container = ({ children }: React.PropsWithChildren) => {
-    if (preview) return <div className="form-holder">{children}</div>;
-    return (
-      <form className="min-h-screen py-8 m-auto form-holder">{children}</form>
-    );
-  };
+  const { values, register } = useForm(form);
 
+  function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!preview) console.log(values);
+  }
+
+  const cn = `${!preview ? "min-h-screen py-8 m-auto " : ""}form-holder`;
   return (
-    <Container>
+    <form className={cn} onSubmit={handleOnSubmit}>
       {/* Form info section */}
       <section className="form-section">
         <div className="section-header">
@@ -27,8 +29,12 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
       </section>
 
       {/* Form questions sections */}
-      {form.sections.map((section) => (
-        <section className="form-section" key={section.id}>
+      {form.sections.map((section, i) => (
+        <section
+          style={{ zIndex: `max(0, ${9999 - i})` }}
+          className="form-section"
+          key={section.id}
+        >
           <div className="section-header">
             <h1>{section.title}</h1>
           </div>
@@ -47,7 +53,7 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
                         <span className="inline-block ml-1 text-danger">*</span>
                       )}
                     </h2>
-                    <Element question={q} />
+                    <Element question={q} {...register(q.id)} />
                   </div>
                 </div>
               );
@@ -55,12 +61,10 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
           </div>
         </section>
       ))}
-      {!preview && (
-        <button type="submit" className="btn-primary w-fit">
-          Submit
-        </button>
-      )}
-    </Container>
+      <button type="submit" className="btn-primary w-fit">
+        Submit
+      </button>
+    </form>
   );
 };
 

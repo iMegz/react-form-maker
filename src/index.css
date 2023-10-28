@@ -85,7 +85,7 @@ td:first-of-type {
 }
 
 .form-section {
-  @apply w-[505px] max-w-[60vw] drop-shadow-lg;
+  @apply relative w-[505px] max-w-[60vw] drop-shadow-lg;
 }
 
 .section-header {

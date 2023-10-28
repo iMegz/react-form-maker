@@ -1,13 +1,9 @@
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import Select from "../Select";
 
-interface CheckedValue {
-  checked: { [key: string]: boolean };
-  other: string;
-}
 type QuestionProps = {
   question: Question;
-  onChange?: (value: string | number | Date | CheckedValue | null) => void;
+  onChange?: (value: ApplicationAnswerType) => void;
 };
 
 // Short answer
@@ -21,6 +17,24 @@ const ShortAnswerQuestion = (props: QuestionProps) => {
       <input
         id={question.id}
         type="text"
+        required={question.required}
+        onChange={handleOnChange}
+      />
+    </div>
+  );
+};
+
+// Paragraph
+const ParagraphQuestion = (props: QuestionProps) => {
+  const { question, onChange } = props;
+  function handleOnChange({ target: { value } }: TextAreaChangeEvent) {
+    if (onChange) onChange(value);
+  }
+  return (
+    <div className="form-group">
+      <textarea
+        id={question.id}
+        rows={3}
         required={question.required}
         onChange={handleOnChange}
       />
@@ -83,24 +97,6 @@ const EmailQuestion = (props: QuestionProps) => {
   );
 };
 
-// Paragraph
-const ParagraphQuestion = (props: QuestionProps) => {
-  const { question, onChange } = props;
-  function handleOnChange({ target: { value } }: TextAreaChangeEvent) {
-    if (onChange) onChange(value);
-  }
-  return (
-    <div className="form-group">
-      <textarea
-        id={question.id}
-        rows={3}
-        required={question.required}
-        onChange={handleOnChange}
-      />
-    </div>
-  );
-};
-
 // Dropdown
 const DropdownQuestion = (props: QuestionProps) => {
   const { question, onChange } = props;
@@ -124,6 +120,11 @@ const DropdownQuestion = (props: QuestionProps) => {
     if (onChange) onChange(value);
   }
 
+  function handleOnChangeOther({ target }: InputChangeEvent) {
+    setValue(target.value);
+    if (onChange) onChange(target.value);
+  }
+
   return (
     <>
       <Select
@@ -139,7 +140,7 @@ const DropdownQuestion = (props: QuestionProps) => {
               id={`${question.id}_other`}
               type="text"
               required={question.required}
-              onChange={({ target }) => setValue(target.value)}
+              onChange={handleOnChangeOther}
               value={value!}
               placeholder="Other"
             />

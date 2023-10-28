@@ -20,6 +20,11 @@ type QuestionType =
 
 type DateType = "date" | "time" | "datetime-local";
 
+interface CheckedValue {
+  checked: { [key: string]: boolean };
+  other: string;
+}
+
 // Default question props without type
 interface DefaultQuestion {
   id: string;
@@ -76,13 +81,18 @@ interface Form extends NewForm {
 }
 
 // Form application
+type ApplicationAnswerType = string | number | CheckedValue;
+
 interface ApplicationQuestion {
+  id: string;
+  sectionId: string;
   type: QuestionType;
-  answer: string | string[] | number | Date;
+  value?: ApplicationAnswerType;
 }
 
 interface ApplicationSection {
-  question: ApplicationQuestion[];
+  id: string;
+  questions: ApplicationQuestion[];
 }
 
 interface ApplicationForm {
