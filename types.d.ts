@@ -1,3 +1,11 @@
+/*********\
+| General |
+\*********/
+type InputProps = React.HtmlHTMLAttributes<HTMLInputElement>;
+type InputChangeEvent = React.ChangeEvent<HTMLInputElement>;
+type TextAreaProps = React.HtmlHTMLAttributes<HTMLTextAreaElement>;
+type TextAreaChangeEvent = React.ChangeEvent<HTMLTextAreaElement>;
+
 /***********\
 | Questions |
 \***********/
@@ -21,7 +29,7 @@ interface DefaultQuestion {
   dateType?: DateType;
   choices?: string[];
   other?: boolean;
-  maxChoices?: Number;
+  maxChoices?: number;
 }
 
 interface DateQuestion extends DefaultQuestion {

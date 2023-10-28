@@ -50,7 +50,7 @@ const EditFormPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-fit">
+    <div className="form-holder">
       {/* Form info section */}
       <section className="form-section">
         <div className="section-header">
@@ -93,6 +93,7 @@ const EditFormPage = () => {
         </div>
       </section>
 
+      {/* Form questions sections */}
       {state.sections.map(({ title, questions, id }) => (
         <FormSection
           dispatch={dispatch}

@@ -80,6 +80,10 @@ td:first-of-type {
 }
 
 /* Forms */
+.form-holder {
+  @apply flex flex-col gap-6 w-fit;
+}
+
 .form-section {
   @apply w-[505px] max-w-[60vw] drop-shadow-lg;
 }
@@ -101,10 +105,10 @@ td:first-of-type {
 }
 
 .form-group label {
-  @apply inline-block mb-1 text-base font-semibold;
+  @apply inline-block mb-1 text-lg font-semibold;
 }
 
 .form-group input,
 .form-group textarea {
-  @apply w-full p-3 border border-gray-700 rounded-md outline-none;
+  @apply w-full p-3 border border-gray-700 rounded-md outline-none resize-none;
 }
