@@ -146,7 +146,7 @@ const HomePage = () => {
           <hr />
           <form
             onSubmit={handleSubmitContactForm}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-4 text-left"
           >
             <div className="form-group">
               <label htmlFor="email">Email</label>
@@ -170,6 +170,17 @@ const HomePage = () => {
           </form>
         </div>
       </section>
+
+      <footer className="py-4 text-lg text-center text-white bg-gray-600 ">
+        Developed by{" "}
+        <a
+          href="https://www.linkedin.com/in/imegz/"
+          target="_blank"
+          className="font-semibold text-primary hover:text-primary-dark"
+        >
+          Ahmed Magdi
+        </a>
+      </footer>
     </main>
   );
 };

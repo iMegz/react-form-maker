@@ -32,7 +32,7 @@ section {
 }
 
 .container {
-  @apply flex flex-col items-center justify-center w-4/5 min-h-screen gap-6 m-auto;
+  @apply flex flex-col items-center justify-center w-4/5 min-h-screen gap-6 m-auto text-center;
 }
 
 .container h2 {
