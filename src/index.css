@@ -2,10 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Scroll bar */
 body::-webkit-scrollbar {
-  width: 0;
+  @apply w-2.5;
 }
 
+/* Track */
+body::-webkit-scrollbar-track {
+  @apply bg-gray-50;
+}
+
+/* Handle */
+body::-webkit-scrollbar-thumb {
+  @apply bg-primary;
+}
+
+/* Handle on hover */
+body::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-dark;
+}
+
+/* General */
 h1 {
   @apply mb-5 text-3xl font-semibold text-primary;
 }
