@@ -7,12 +7,17 @@ import NotFound from "./pages/NotFound";
 import EditFormPage from "./pages/EditFormPage";
 import FormPage from "./pages/FormPage";
 import DashboardLayout from "./layouts/DashboardLayout";
+import { useAuth0 } from "@auth0/auth0-react";
+import HomePage from "./pages/HomePage";
 
 function App() {
+  const { isAuthenticated } = useAuth0();
+  const Home = isAuthenticated ? DashboardLayout : HomePage;
+
   return (
     <div className="flex bg-slate-100 max-h-max">
       <Routes>
-        <Route path="/" element={<DashboardLayout />}>
+        <Route path="/" element={<Home />}>
           <Route index element={<Dashboardpage />} />
           <Route path="forms">
             <Route index element={<FormsPage />} />

@@ -5,6 +5,7 @@ import {
 } from "@ant-design/icons";
 import { Link, NavLink } from "react-router-dom";
 import logo from "../assets/logo.svg";
+import LogoutButton from "./LogoutButton";
 
 const links = [
   { label: "Dashboard", path: "/", icon: <DashboardOutlined /> },
@@ -35,7 +36,7 @@ const NavbarLink = ({ icon, label, path }: (typeof links)[0]) => {
   );
 };
 
-const Navbar = () => {
+const DashboardNavbar = () => {
   return (
     <nav className="flex flex-col items-center min-h-screen bg-white drop-shadow-md">
       <div className="w-20 px-1 pt-5 mb-4 md:p-5 md:w-full">
@@ -47,9 +48,13 @@ const Navbar = () => {
         {links.map((link) => (
           <NavbarLink key={link.path} {...link} />
         ))}
+        <hr />
+        <li className="flex justify-center">
+          <LogoutButton />
+        </li>
       </ul>
     </nav>
   );
 };
 
-export default Navbar;
+export default DashboardNavbar;
