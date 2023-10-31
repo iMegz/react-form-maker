@@ -10,6 +10,10 @@ h1 {
   @apply mb-5 text-3xl font-semibold text-primary;
 }
 
+.container {
+  @apply flex flex-col items-center justify-center w-4/5 min-h-screen gap-6 m-auto;
+}
+
 /* Buttons */
 .btn {
   @apply px-5 py-2 text-base transition-all rounded-md;

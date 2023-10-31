@@ -6,6 +6,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 const links = [
   { label: "About", hash: "about" },
   { label: "Features", hash: "features" },
+  { label: "Pricing", hash: "pricing" },
   { label: "Contact us", hash: "contact" },
 ];
 
