@@ -1,9 +1,35 @@
 import HomeNavbar from "../components/HomeNavbar";
 import hero from "../assets/heroImg.svg";
 import { useAuth0 } from "@auth0/auth0-react";
+import {
+  EditOutlined,
+  FormOutlined,
+  PieChartOutlined,
+} from "@ant-design/icons";
 
 const HomePage = () => {
   const { loginWithRedirect } = useAuth0();
+
+  const features = [
+    {
+      title: "Data Crafting",
+      description:
+        "Craft and design data forms with ease. Our intuitive platform allows you to create custom forms tailored to your needs.",
+      icon: FormOutlined,
+    },
+    {
+      title: "Analyze Insights",
+      description:
+        "Dive deep into your collected data and gain valuable insights. Our analysis tools make it easy to uncover trends and patterns.",
+      icon: PieChartOutlined,
+    },
+    {
+      title: "Customization",
+      description:
+        "Tailor your surveys and forms to match your brand's identity. Enjoy the freedom to customize every aspect.",
+      icon: EditOutlined,
+    },
+  ];
 
   return (
     <main className="w-full min-h-screen">
@@ -36,11 +62,11 @@ const HomePage = () => {
       {/* About */}
       <section className="bg-white " id="about">
         <div className="container text-center">
-          <h2 className="text-5xl">
+          <h2>
             What is
             <span className="font-semibold text-primary"> Forms Chief </span>?
           </h2>
-          <hr className="w-32 border-primary" />
+          <hr />
           <div className="flex flex-col w-full gap-3 text-lg text-gray-500 lg:w-3/4">
             <p>
               Forms Chief is your all-in-one platform for creating, managing,
@@ -62,6 +88,29 @@ const HomePage = () => {
               that Forms Chief brings to your fingertips
             </p>
           </div>
+        </div>
+      </section>
+      <section id="features">
+        <div className="container text-center">
+          <h2>
+            Why
+            <span className="font-semibold text-primary"> Forms Chief </span>?
+          </h2>
+          <hr />
+          <ul className="flex flex-col items-center gap-6 lg:gap-3 lg:flex-row">
+            {features.map((feature) => (
+              <li
+                key={feature.title}
+                className="flex flex-col items-center max-w-lg px-6 text-center lg:items-start lg:text-left"
+              >
+                <feature.icon className="text-4xl text-primary" />
+                <h3 className="mt-3 mb-1 text-xl font-semibold">
+                  {feature.title}
+                </h3>
+                <p>{feature.description}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </main>

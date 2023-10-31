@@ -14,6 +14,14 @@ h1 {
   @apply flex flex-col items-center justify-center w-4/5 min-h-screen gap-6 m-auto;
 }
 
+.container h2 {
+  @apply text-5xl;
+}
+
+.container hr {
+  @apply w-32 mb-6 border-primary;
+}
+
 /* Buttons */
 .btn {
   @apply px-5 py-2 text-base transition-all rounded-md;

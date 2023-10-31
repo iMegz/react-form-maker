@@ -21,7 +21,11 @@ const HomeNavbar = () => {
       <ul className="flex items-center gap-4 ml-auto">
         {links.map(({ hash, label }) => (
           <li key={hash}>
-            <HashLink to={`/#${hash}`} smooth>
+            <HashLink
+              to={`/#${hash}`}
+              smooth
+              className="pb-3 transition-all border-b-2 hover:text-primary border-b-transparent hover:border-b-primary"
+            >
               {label}
             </HashLink>
           </li>
