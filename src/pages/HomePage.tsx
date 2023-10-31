@@ -3,9 +3,14 @@ import hero from "../assets/heroImg.svg";
 import { useAuth0 } from "@auth0/auth0-react";
 import { features, plans } from "../lib/homePageData";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
+import { FormEvent } from "react";
 
 const HomePage = () => {
   const { loginWithRedirect } = useAuth0();
+
+  function handleSubmitContactForm(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+  }
 
   function pricingFeature(value: boolean | string) {
     if (typeof value === "string") return value;
@@ -46,7 +51,7 @@ const HomePage = () => {
 
       {/* About */}
       <section id="about">
-        <div className="container text-center">
+        <div className="container">
           <h2>
             What is
             <span className="font-semibold text-primary"> Forms Chief </span>?
@@ -78,7 +83,7 @@ const HomePage = () => {
 
       {/* Features */}
       <section id="features" className="bg-white">
-        <div className="container text-center">
+        <div className="container">
           <h2>
             Why
             <span className="font-semibold text-primary"> Forms Chief </span>?
@@ -103,7 +108,7 @@ const HomePage = () => {
 
       {/* Pricing */}
       <section id="pricing">
-        <div className="container text-center">
+        <div className="container">
           <h2>Pricing</h2>
           <hr />
           <ul className="flex flex-col items-center gap-6 md:flex-row">
@@ -131,6 +136,38 @@ const HomePage = () => {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* Contact us */}
+      <section className="bg-white" id="contact">
+        <div className="container">
+          <h2>Have any questions ?</h2>
+          <hr />
+          <form
+            onSubmit={handleSubmitContactForm}
+            className="flex flex-col gap-4"
+          >
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                required
+                id="email"
+                placeholder="example@gmail.com"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="subject">Subject</label>
+              <input type="text" required id="subject" />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="message">Message</label>
+              <textarea id="message" rows={4} />
+            </div>
+          </form>
         </div>
       </section>
     </main>

@@ -36,7 +36,7 @@ section {
 }
 
 .container h2 {
-  @apply text-5xl font-light uppercase;
+  @apply text-5xl font-light text-center uppercase;
 }
 
 .container hr {
