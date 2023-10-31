@@ -1,42 +1,27 @@
 import HomeNavbar from "../components/HomeNavbar";
 import hero from "../assets/heroImg.svg";
 import { useAuth0 } from "@auth0/auth0-react";
-import {
-  EditOutlined,
-  FormOutlined,
-  PieChartOutlined,
-} from "@ant-design/icons";
+import { features, plans } from "../lib/homePageData";
+import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 
 const HomePage = () => {
   const { loginWithRedirect } = useAuth0();
 
-  const features = [
-    {
-      title: "Data Crafting",
-      description:
-        "Craft and design data forms with ease. Our intuitive platform allows you to create custom forms tailored to your needs.",
-      icon: FormOutlined,
-    },
-    {
-      title: "Analyze Insights",
-      description:
-        "Dive deep into your collected data and gain valuable insights. Our analysis tools make it easy to uncover trends and patterns.",
-      icon: PieChartOutlined,
-    },
-    {
-      title: "Customization",
-      description:
-        "Tailor your surveys and forms to match your brand's identity. Enjoy the freedom to customize every aspect.",
-      icon: EditOutlined,
-    },
-  ];
+  function pricingFeature(value: boolean | string) {
+    if (typeof value === "string") return value;
+    return value ? (
+      <CheckCircleFilled className="text-green-500" />
+    ) : (
+      <CloseCircleFilled className="text-red-500" />
+    );
+  }
 
   return (
     <main className="w-full min-h-screen">
       <nav className="p-5 bg-white drop-shadow-md">
         <HomeNavbar />
       </nav>
-      <div className="flex items-center px-5 justify-center gap-8 w-full min-h-[calc(100vh-84px)] bg-blue-100 ">
+      <div className="flex items-center px-5 justify-center gap-8 w-full min-h-[calc(100vh-84px)] bg-blue-100 drop-shadow-sm">
         <div className="flex flex-col items-center max-w-lg text-center lg:items-start lg:text-left">
           <h1 className="mb-2 text-5xl uppercase">Forms Chief</h1>
           <h2 className="text-2xl uppercase ">
@@ -60,7 +45,7 @@ const HomePage = () => {
       </div>
 
       {/* About */}
-      <section className="bg-white " id="about">
+      <section id="about">
         <div className="container text-center">
           <h2>
             What is
@@ -90,7 +75,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      <section id="features">
+
+      {/* Features */}
+      <section id="features" className="bg-white">
         <div className="container text-center">
           <h2>
             Why
@@ -108,6 +95,39 @@ const HomePage = () => {
                   {feature.title}
                 </h3>
                 <p>{feature.description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing">
+        <div className="container text-center">
+          <h2>Pricing</h2>
+          <hr />
+          <ul className="flex flex-col items-center gap-6 md:flex-row">
+            {plans.map((plan) => (
+              <li
+                key={plan.title}
+                className="flex flex-col bg-white drop-shadow-lg w-72"
+              >
+                <h3 className="w-full py-4 text-2xl text-center text-white bg-primary">
+                  {plan.title}
+                </h3>
+                <div className="py-3">
+                  <span className="text-5xl">{plan.price}</span>
+                  <span className="text-xl"> $ / Month</span>
+                </div>
+                {plan.features.map((feature) => (
+                  <div
+                    key={feature.title}
+                    className="flex items-center justify-between p-3 odd:bg-gray-100"
+                  >
+                    <h4>{feature.title}</h4>
+                    <span>{pricingFeature(feature.value)}</span>
+                  </div>
+                ))}
               </li>
             ))}
           </ul>

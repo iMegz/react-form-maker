@@ -10,16 +10,20 @@ h1 {
   @apply mb-5 text-3xl font-semibold text-primary;
 }
 
+section {
+  @apply py-8;
+}
+
 .container {
   @apply flex flex-col items-center justify-center w-4/5 min-h-screen gap-6 m-auto;
 }
 
 .container h2 {
-  @apply text-5xl;
+  @apply text-5xl font-light uppercase;
 }
 
 .container hr {
-  @apply w-32 mb-6 border-primary;
+  @apply w-32 mb-6 border border-primary-dark;
 }
 
 /* Buttons */
