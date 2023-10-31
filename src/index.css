@@ -114,7 +114,7 @@ td:first-of-type {
 
 /* Forms */
 .form-holder {
-  @apply flex flex-col gap-6 w-fit;
+  @apply flex flex-col w-fit;
 }
 
 .form-section {
