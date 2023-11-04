@@ -15,7 +15,7 @@ function App() {
   const { isAuthenticated, isLoading } = useAuth0();
 
   function setRoutes() {
-    if (isLoading) return <Route path="/" element={<LoadingPage />} />;
+    if (isLoading) return <Route path="*" element={<LoadingPage />} />;
     if (!isAuthenticated) return <Route path="/" element={<HomePage />} />;
     return (
       <Route path="/" element={<DashboardLayout />}>

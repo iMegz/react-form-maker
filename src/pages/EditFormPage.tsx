@@ -5,11 +5,55 @@ import FormSection from "../components/Form/FormSection";
 import FileUpload from "../components/FileUpload";
 import { NewFormSchema } from "../validators/formValidators";
 import FormError from "../components/Form/FormError";
+import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
 
 const EditFormPage = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<any>();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
 
+  // Form submit
+  const handleSaveForm = async () => {
+    // Disable save button
+    setIsLoading(true);
+
+    try {
+      // Validate form data
+      const validation = NewFormSchema.safeParse(state);
+
+      if (validation.success) {
+        // Remove any previous error messages
+        setErrors(undefined);
+
+        const coverImg = validation.data.coverImg?.name; // FIX this by saving images
+        const data = { ...validation.data, coverImg };
+
+        // Get jwt token
+        const path = `${import.meta.env.VITE_API}/forms/new`;
+        const token = await getAccessTokenSilently();
+        const authorization = `Bearer ${token}`;
+
+        // Send to server (will fix it to send images too)
+        const res = await axios.post(path, data, {
+          headers: { authorization },
+        });
+        if (res.status === 200) navigate("/forms");
+        else alert("Failed to save form");
+      } else {
+        const errors = validation.error.flatten().fieldErrors;
+        setErrors(errors);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+  };
+
+  // Chagne handlers
   const handleAddSection = () => {
     dispatch({ type: "ADD_SECTION" });
   };
@@ -36,19 +80,7 @@ const EditFormPage = () => {
     dispatch({ type: "SET_PUBLIC", payload });
   };
 
-  const handleSaveForm = () => {
-    const validation = NewFormSchema.safeParse(state);
-    if (validation.success) {
-      // Send to backend
-      setErrors(undefined);
-      console.log(validation.data);
-      console.log(JSON.stringify(validation.data));
-    } else {
-      const errors = validation.error.flatten().fieldErrors;
-      setErrors(errors);
-    }
-  };
-
+  // JSX
   return (
     <div className="form-holder">
       {/* Form info section */}
@@ -107,14 +139,18 @@ const EditFormPage = () => {
 
       <button
         onClick={handleAddSection}
-        className="flex items-center w-full gap-3 p-3 text-black bg-white shadow-lg"
+        className="flex items-center w-full gap-3 p-3 mb-2 text-black bg-white shadow-lg"
       >
         <PlusOutlined />
         Add new section
       </button>
       {/* Errors */}
       {errors && <FormError<NewForm> errors={errors} />}
-      <button className="btn-primary w-fit" onClick={handleSaveForm}>
+      <button
+        className="mt-2 btn-primary w-fit"
+        disabled={isLoading}
+        onClick={handleSaveForm}
+      >
         Save
       </button>
     </div>

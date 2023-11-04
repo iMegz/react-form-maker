@@ -1,9 +1,9 @@
 /*********\
 | General |
 \*********/
-type InputProps = React.HtmlHTMLAttributes<HTMLInputElement>;
+type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 type InputChangeEvent = React.ChangeEvent<HTMLInputElement>;
-type TextAreaProps = React.HtmlHTMLAttributes<HTMLTextAreaElement>;
+type TextAreaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 type TextAreaChangeEvent = React.ChangeEvent<HTMLTextAreaElement>;
 
 /***********\
