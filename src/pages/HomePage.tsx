@@ -23,7 +23,7 @@ const HomePage = () => {
 
   return (
     <main className="w-full min-h-screen">
-      <nav className="p-5 bg-white drop-shadow-md">
+      <nav className="relative z-10 p-5 bg-white drop-shadow-md">
         <HomeNavbar />
       </nav>
       <div className="flex items-center px-5 justify-center gap-8 w-full min-h-[calc(100vh-84px)] bg-blue-100 drop-shadow-sm">
