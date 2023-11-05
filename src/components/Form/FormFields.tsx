@@ -113,6 +113,9 @@ const DropdownQuestion = (props: QuestionProps) => {
 
   const [value, setValue] = useState(init);
   const [other, setOther] = useState<boolean>(items[0].value === "other");
+  useEffect(() => {
+    if (onChange && value) onChange(value);
+  }, []);
 
   function handleOnChange(value: string) {
     setValue(value === "other" ? "" : value);

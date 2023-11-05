@@ -1,71 +1,42 @@
-import formFields from "../components/Form/FormFields";
-import useForm from "../hooks/useForm";
-import { form } from "../lib/data";
+import { useEffect, useState } from "react";
+import LoadingPage from "./LoadingPage";
+import { useParams } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import axios from "axios";
+import NotFound from "./NotFound";
+import Form from "../components/Form/Form";
 
 const FormPage = ({ preview }: { preview?: boolean }) => {
-  const { values, register } = useForm(form);
+  const [form, setForm] = useState<Form | null | undefined>(null);
+  const { id } = useParams();
+  const { getAccessTokenSilently } = useAuth0();
 
-  function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  useEffect(() => {
+    async function fetchData() {
+      const isAuth = preview ? "" : "/unauth";
+      const path = `${import.meta.env.VITE_API}/forms${isAuth}/get/${id}`;
+      const headers: { authorization?: string } = {};
+      if (preview) {
+        const token = await getAccessTokenSilently();
+        const authorization = `Bearer ${token}`;
+        headers.authorization = authorization;
+      }
+      return axios.get(path, { headers });
+    }
+
+    fetchData()
+      .then((res) => setForm(res.data))
+      .catch(() => setForm(undefined));
+  }, []);
+
+  function onSave(values: ApplicationForm) {
     if (!preview) console.log(values);
+    else console.log("Previe");
   }
 
-  const cn = `${!preview ? "min-h-screen py-8 m-auto " : ""}form-holder`;
-  return (
-    <form className={cn} onSubmit={handleOnSubmit}>
-      {/* Form info section */}
-      <section className="form-section">
-        <div className="section-header">
-          <h1>{form.title}</h1>
-        </div>
-        <img
-          className="object-contain w-full"
-          src={form.coverImg}
-          alt={form.title}
-        />
-        <div className="section-body">
-          <p>{form.description}</p>
-        </div>
-      </section>
-
-      {/* Form questions sections */}
-      {form.sections.map((section, i) => (
-        <section
-          style={{ zIndex: `max(0, ${9999 - i})` }}
-          className="form-section"
-          key={section.id}
-        >
-          <div className="section-header">
-            <h1>{section.title}</h1>
-          </div>
-          <div className="section-body">
-            {section.questions.map((q) => {
-              const Element = formFields[q.type];
-              return (
-                <div
-                  key={q.id}
-                  className="flex flex-col gap-4 pb-3 border-b border-b-gray-300 last-of-type:border-b-0 last-of-type:pb-0"
-                >
-                  <div className="flex flex-col gap-2 ">
-                    <h2 className="text-lg font-semibold">
-                      {q.question}
-                      {q.required && (
-                        <span className="inline-block ml-1 text-danger">*</span>
-                      )}
-                    </h2>
-                    <Element question={q} {...register(q.id)} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      ))}
-      <button type="submit" className="btn-primary w-fit">
-        Submit
-      </button>
-    </form>
-  );
+  if (form === undefined) return <NotFound />;
+  if (form === null) return <LoadingPage />;
+  return <Form form={form} onSave={onSave} preview={!!preview} />;
 };
 
 export default FormPage;
