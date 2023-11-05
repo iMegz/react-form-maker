@@ -41,7 +41,8 @@ const EditFormPage = () => {
         const res = await axios.post(path, data, {
           headers: { authorization },
         });
-        if (res.status === 200) navigate("/forms");
+
+        if (res.status === 201) navigate("/forms");
         else alert("Failed to save form");
       } else {
         const errors = validation.error.flatten().fieldErrors;
