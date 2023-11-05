@@ -29,7 +29,7 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
       .catch(() => setForm(undefined));
   }, []);
 
-  function onSave(values: ApplicationForm) {
+  function onSave(values: Response) {
     if (!preview) console.log(values);
     else console.log("Previe");
   }

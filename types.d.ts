@@ -81,20 +81,20 @@ interface Form extends NewForm {
 }
 
 // Form application
-type ApplicationAnswerType = string | number | CheckedValue;
+type ResponseAnswerType = string | number | CheckedValue;
 
-interface ApplicationQuestion {
+interface ResponseQuestion {
   id: string;
   sectionId: string;
   type: QuestionType;
-  value?: ApplicationAnswerType;
+  value?: ResponseAnswerType;
 }
 
-interface ApplicationSection {
+interface ResponseSection {
   id: string;
-  questions: ApplicationQuestion[];
+  questions: ResponseQuestion[];
 }
 
-interface ApplicationForm {
-  sections: ApplicationSection[];
+interface Response {
+  sections: ResponseSection[];
 }

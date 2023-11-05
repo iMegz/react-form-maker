@@ -4,9 +4,9 @@ type RegisterdID = { id: string; sectionId: string; type: QuestionType };
 
 export default function useForm(form: Form) {
   const registerdIDs: RegisterdID[] = [];
-  const applicationForm: ApplicationForm = { sections: [] };
+  const applicationForm: Response = { sections: [] };
   applicationForm.sections = form.sections.map((section) => {
-    const questions: ApplicationQuestion[] = section.questions.map(
+    const questions: ResponseQuestion[] = section.questions.map(
       ({ type, id }) => {
         const sectionId = section.id;
         registerdIDs.push({ id, type, sectionId });
@@ -29,12 +29,12 @@ export default function useForm(form: Form) {
     );
     if (!registerdID) throw Error("Invalid id");
     registerdID.type;
-    function onChange(value: ApplicationAnswerType) {
+    function onChange(value: ResponseAnswerType) {
       setValues((oldState) => {
         const newState = { ...oldState };
         newState.sections = oldState.sections.map((section) => {
           if (section.id !== registerdID?.sectionId) return section;
-          const questions: ApplicationQuestion[] = section.questions.map(
+          const questions: ResponseQuestion[] = section.questions.map(
             (question) => {
               if (question.id !== registerdID.id) return question;
               return { ...question, value };

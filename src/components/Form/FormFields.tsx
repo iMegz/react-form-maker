@@ -3,7 +3,7 @@ import Select from "../Select";
 
 type QuestionProps = {
   question: Question;
-  onChange?: (value: ApplicationAnswerType) => void;
+  onChange?: (value: ResponseAnswerType) => void;
 };
 
 // Short answer
