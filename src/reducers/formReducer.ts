@@ -1,7 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
 
-type EditableForm = NewForm & { id?: string };
-
 export type Actions =
   | "INIT"
   | "CHANGE_TITLE"
@@ -17,7 +15,7 @@ export type Actions =
 
 export type Action = { type: Actions; payload?: any };
 
-export const initialState: EditableForm = {
+export const initialState: NewForm = {
   title: "My form",
   description: "",
   coverImg: undefined,
@@ -44,13 +42,10 @@ function getIndex(arr: any[], id: string) {
   return index;
 }
 
-export function reducer(
-  state: EditableForm,
-  { type, payload }: Action
-): EditableForm {
+export function reducer(state: NewForm, { type, payload }: Action): NewForm {
   switch (type) {
     case "INIT": {
-      const form = payload as EditableForm;
+      const form = payload as NewForm;
       return { ...form };
     }
 

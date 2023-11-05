@@ -96,6 +96,7 @@ const FormSection = ({
       <div className="section-body">
         {questions.map((question) => (
           <QuestionTemplate
+            editMode={formId && !mounted ? false : undefined}
             key={question.id}
             onDelete={handleDelQuestion(question.id)}
             onSave={handleOnSave(question.id)}

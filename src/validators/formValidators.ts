@@ -77,10 +77,10 @@ const NewFormSchema = z.object({
   isPublic: z.boolean().optional(),
   sections: z.array(SectionSchema).min(1, messages.size("Form", "section", 1)),
   coverImg: z
-    .instanceof(File)
+    .union([z.instanceof(File), z.string()])
     .optional()
     .superRefine((file, ctx) => {
-      if (file) {
+      if (file && file instanceof File) {
         //File larger than 250KB
         if (file.size > COVER_IMG_MAX_SIZE) {
           ctx.addIssue({

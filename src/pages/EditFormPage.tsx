@@ -58,20 +58,24 @@ const EditFormPage = () => {
         // Remove any previous error messages
         setErrors(undefined);
 
-        const coverImg = validation.data.coverImg?.name; // FIX this by saving images
+        let coverImg = validation.data.coverImg; // FIX this by saving images
+        if (coverImg instanceof File) coverImg = URL.createObjectURL(coverImg);
         const data = { ...validation.data, coverImg };
 
         // Get jwt token
-        const path = `${import.meta.env.VITE_API}/forms/new`;
         const token = await getAccessTokenSilently();
         const authorization = `Bearer ${token}`;
 
         // Send to server (will fix it to send images too)
-        const res = await axios.post(path, data, {
+        const endPoint = id ? `edit/${id}` : "new";
+        const path = `${import.meta.env.VITE_API}/forms/${endPoint}`;
+        const method = id ? "patch" : "post";
+
+        const res = await axios[method](path, data, {
           headers: { authorization },
         });
 
-        if (res.status === 201) navigate("/forms");
+        if (res.statusText === "OK") navigate("/forms");
         else alert("Failed to save form");
       } else {
         const errors = validation.error.flatten().fieldErrors;

@@ -45,6 +45,7 @@ const QuestionTemplate = ({
     mode: editMode ?? true,
     type: editMode ?? true,
   });
+
   const { onChange, onChoiceAction } = useQuestion(setQ);
   const [errors, setErrors] = useState<any>();
 
