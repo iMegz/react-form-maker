@@ -7,9 +7,16 @@ interface FileUploadProps {
   accept?: string;
   multiple?: boolean;
   onChange?: (file: File | null) => void;
+  src?: string;
 }
 
-const FileUpload = ({ title, info, accept, onChange }: FileUploadProps) => {
+const FileUpload = ({
+  title,
+  info,
+  accept,
+  onChange,
+  src,
+}: FileUploadProps) => {
   const ref = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
 
@@ -34,6 +41,8 @@ const FileUpload = ({ title, info, accept, onChange }: FileUploadProps) => {
           className="h-full rounded-md"
         />
       );
+    } else if (src) {
+      return <img src={src} alt={src} className="h-full rounded-md" />;
     } else {
       return (
         <>
@@ -47,7 +56,7 @@ const FileUpload = ({ title, info, accept, onChange }: FileUploadProps) => {
 
   return (
     <div className="relative">
-      {file && (
+      {(file || src) && (
         <DeleteFilled
           className="absolute btn-text-danger top-1 right-1"
           onClick={deleteFile}

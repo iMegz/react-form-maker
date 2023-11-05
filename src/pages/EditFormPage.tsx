@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { ChangeEvent, useReducer, useState } from "react";
+import { ChangeEvent, useEffect, useReducer, useState } from "react";
 import { initialState, reducer } from "../reducers/formReducer";
 import FormSection from "../components/Form/FormSection";
 import FileUpload from "../components/FileUpload";
@@ -7,14 +7,43 @@ import { NewFormSchema } from "../validators/formValidators";
 import FormError from "../components/Form/FormError";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Spinner from "../components/Spinner";
 
 const EditFormPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [loadedForm, setLoadedForm] = useState(false);
   const [errors, setErrors] = useState<any>();
   const [state, dispatch] = useReducer(reducer, initialState);
   const { getAccessTokenSilently } = useAuth0();
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    async function fetchData() {
+      const token = await getAccessTokenSilently();
+      const path = `${import.meta.env.VITE_API}/forms/get/${id}`;
+      const authorization = `Bearer ${token}`;
+      return axios.get(path, { headers: { authorization } });
+    }
+
+    if (id) {
+      fetchData().then((res) => {
+        dispatch({ type: "INIT", payload: res.data });
+        setLoadedForm(true);
+      });
+    }
+  }, []);
+
+  if (id && !loadedForm)
+    return (
+      <div className="grid w-full h-full place-items-center">
+        <div className="flex flex-col items-center">
+          <h1>Loading Form</h1>
+          <Spinner />
+        </div>
+      </div>
+    );
 
   // Form submit
   const handleSaveForm = async () => {
@@ -112,6 +141,9 @@ const EditFormPage = () => {
             accept=".jpg,.jpeg,.png,.svg"
             info="Recomended size 820 x 312"
             onChange={handleChangeCoverImg}
+            src={
+              typeof state.coverImg === "string" ? state.coverImg : undefined
+            }
           />
           <div className="flex gap-2">
             <input

@@ -70,7 +70,7 @@ type Section = {
 interface NewForm {
   title: string;
   description?: string;
-  coverImg?: File;
+  coverImg?: File | string;
   isPublic?: boolean;
   sections: Section[];
 }
