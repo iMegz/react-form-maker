@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import LoadingPage from "./LoadingPage";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import NotFound from "./NotFound";
@@ -10,6 +10,7 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
   const [form, setForm] = useState<Form | null | undefined>(null);
   const { id } = useParams();
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -30,8 +31,10 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
   }, []);
 
   function onSave(values: Response) {
-    if (!preview) console.log(values);
-    else console.log("Previe");
+    if (preview) navigate("/response/sent");
+    else {
+      console.log(values);
+    }
   }
 
   if (form === undefined) return <NotFound />;

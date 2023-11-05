@@ -10,6 +10,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import { useAuth0 } from "@auth0/auth0-react";
 import HomePage from "./pages/HomePage";
 import LoadingPage from "./pages/LoadingPage";
+import ResponseSentPage from "./pages/ResponseSentPage";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -35,6 +36,7 @@ function App() {
       <Routes>
         {setRoutes()}
         <Route path="form/:id" element={<FormPage />} />
+        <Route path="response/sent" element={<ResponseSentPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
