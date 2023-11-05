@@ -3,6 +3,7 @@ import { Action } from "../../reducers/formReducer";
 import QuestionTemplate from "../QuestionTemplate/QuestionTemplate";
 import Modal from "../Modal";
 import { createPortal } from "react-dom";
+import { useParams } from "react-router-dom";
 
 interface FormSectionProps {
   questions: Question[];
@@ -20,13 +21,19 @@ const FormSection = ({
   canDelete,
 }: FormSectionProps) => {
   const [modal, setModal] = useState<React.ReactNode | null>(null);
+  const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { id: formId } = useParams();
 
   useEffect(() => {
-    ref.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-    });
+    if (formId && !mounted) setMounted(true);
+
+    if (!formId || mounted) {
+      ref.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
   }, [questions.length]);
 
   function deleteModal() {
