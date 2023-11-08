@@ -70,14 +70,14 @@ type Section = {
 interface NewForm {
   title: string;
   description?: string;
-  coverImg?: File | string;
+  // coverImg?: File | string;
   isPublic?: boolean;
   sections: Section[];
 }
 
 interface Form extends NewForm {
   id: string;
-  coverImg: string;
+  // coverImg: string;
 }
 
 // Form application

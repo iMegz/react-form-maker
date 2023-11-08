@@ -4,7 +4,7 @@ export type Actions =
   | "INIT"
   | "CHANGE_TITLE"
   | "CHANGE_DESCRIPTION"
-  | "CHANGE_COVER_IMG"
+  // | "CHANGE_COVER_IMG"
   | "SET_PUBLIC"
   | "ADD_SECTION"
   | "DEL_SECTION"
@@ -18,7 +18,7 @@ export type Action = { type: Actions; payload?: any };
 export const initialState: NewForm = {
   title: "My form",
   description: "",
-  coverImg: undefined,
+  // coverImg: undefined,
   isPublic: false,
   sections: [],
 };
@@ -60,10 +60,10 @@ export function reducer(state: NewForm, { type, payload }: Action): NewForm {
       return { ...state, description };
     }
 
-    case "CHANGE_COVER_IMG": {
-      const coverImg = (payload as File) || undefined;
-      return { ...state, coverImg };
-    }
+    // case "CHANGE_COVER_IMG": {
+    //   const coverImg = (payload as File) || undefined;
+    //   return { ...state, coverImg };
+    // }
 
     case "SET_PUBLIC": {
       const isPublic = payload as boolean;

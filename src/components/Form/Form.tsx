@@ -16,15 +16,15 @@ const Form = ({ form, onSave }: FormProps) => {
       }}
     >
       {/* Form info section */}
-      <section className="form-section">
+      <section className="pb-0 form-section">
         <div className="section-header">
           <h1>{form.title}</h1>
         </div>
-        <img
+        {/* <img
           className="object-contain w-full"
           src={form.coverImg}
           alt={form.title}
-        />
+        /> */}
         <div className="section-body">
           <p>{form.description}</p>
         </div>

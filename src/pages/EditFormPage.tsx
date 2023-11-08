@@ -2,7 +2,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { ChangeEvent, useEffect, useReducer, useState } from "react";
 import { initialState, reducer } from "../reducers/formReducer";
 import FormSection from "../components/Form/FormSection";
-import FileUpload from "../components/FileUpload";
+// import FileUpload from "../components/FileUpload";
 import { NewFormSchema } from "../validators/formValidators";
 import FormError from "../components/Form/FormError";
 import axios from "axios";
@@ -58,9 +58,10 @@ const EditFormPage = () => {
         // Remove any previous error messages
         setErrors(undefined);
 
-        let coverImg = validation.data.coverImg; // FIX this by saving images
-        if (coverImg instanceof File) coverImg = URL.createObjectURL(coverImg);
-        const data = { ...validation.data, coverImg };
+        // let coverImg = validation.data.coverImg; // FIX this by saving images
+        // if (coverImg instanceof File) coverImg = URL.createObjectURL(coverImg);
+        // const data = { ...validation.data, coverImg };
+        const data = validation.data;
 
         // Get jwt token
         const token = await getAccessTokenSilently();
@@ -75,7 +76,7 @@ const EditFormPage = () => {
           headers: { authorization },
         });
 
-        if (res.statusText === "OK") navigate("/forms");
+        if (res.status === 200 || res.status === 201) navigate("/forms");
         else alert("Failed to save form");
       } else {
         const errors = validation.error.flatten().fieldErrors;
@@ -104,9 +105,9 @@ const EditFormPage = () => {
     dispatch({ type: "CHANGE_DESCRIPTION", payload });
   };
 
-  const handleChangeCoverImg = (payload: File | null) => {
-    dispatch({ type: "CHANGE_COVER_IMG", payload });
-  };
+  // const handleChangeCoverImg = (payload: File | null) => {
+  //   dispatch({ type: "CHANGE_COVER_IMG", payload });
+  // };
 
   const handleSetPublic = ({
     target: { checked: payload },
@@ -140,7 +141,7 @@ const EditFormPage = () => {
 
           <hr />
 
-          <FileUpload
+          {/* <FileUpload
             title="Cover image"
             accept=".jpg,.jpeg,.png,.svg"
             info="Recomended size 820 x 312"
@@ -148,7 +149,7 @@ const EditFormPage = () => {
             src={
               typeof state.coverImg === "string" ? state.coverImg : undefined
             }
-          />
+          /> */}
           <div className="flex gap-2">
             <input
               type="checkbox"
