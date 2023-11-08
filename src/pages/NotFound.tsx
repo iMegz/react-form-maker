@@ -1,6 +1,6 @@
 const NotFound = () => {
   return (
-    <div className="grid w-screen h-screen place-items-center">
+    <div className="grid w-full h-screen place-items-center">
       <span>404 Page not found</span>
     </div>
   );

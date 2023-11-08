@@ -30,10 +30,16 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
       .catch(() => setForm(undefined));
   }, []);
 
-  function onSave(values: Response) {
+  async function onSave(values: FormResponse) {
     if (preview) navigate("/response/sent");
     else {
-      console.log(values);
+      const data = { form: id, sections: values.sections };
+      const path = `${import.meta.env.VITE_API}/response/new`;
+      const token = await getAccessTokenSilently();
+      const authorization = `Bearer ${token}`;
+
+      await axios.post(path, data, { headers: { authorization } });
+      navigate("/response/sent");
     }
   }
 

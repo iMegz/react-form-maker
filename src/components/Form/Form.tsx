@@ -3,7 +3,7 @@ import formFields from "./FormFields";
 
 interface FormProps {
   form: Form;
-  onSave: (values: Response) => void;
+  onSave: (values: FormResponse) => void;
 }
 const Form = ({ form, onSave }: FormProps) => {
   const { values, register } = useForm(form);

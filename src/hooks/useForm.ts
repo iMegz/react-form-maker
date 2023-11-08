@@ -4,7 +4,7 @@ type RegisterdID = { id: string; sectionId: string; type: QuestionType };
 
 export default function useForm(form: Form) {
   const registerdIDs: RegisterdID[] = [];
-  const applicationForm: Response = { sections: [] };
+  const applicationForm: FormResponse = { sections: [], form: form.id };
   applicationForm.sections = form.sections.map((section) => {
     const questions: ResponseQuestion[] = section.questions.map(
       ({ type, id }) => {

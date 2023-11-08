@@ -95,6 +95,7 @@ interface ResponseSection {
   questions: ResponseQuestion[];
 }
 
-interface Response {
+interface FormResponse {
+  form: string;
   sections: ResponseSection[];
 }
