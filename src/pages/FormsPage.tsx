@@ -92,7 +92,7 @@ const FormsPage = () => {
     if (!forms.length) {
       return (
         <tr>
-          <td colSpan={3} className="">
+          <td colSpan={3}>
             <span className="block text-lg text-center text-slate-400">
               You didn't create any forms yet
             </span>

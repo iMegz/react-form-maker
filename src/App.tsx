@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import FormsPage from "./pages/FormsPage";
-import Dashboardpage from "./pages/Dashboardpage";
+import DashboardPage from "./pages/Dashboardpage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import EditFormPage from "./pages/EditFormPage";
@@ -11,6 +11,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import HomePage from "./pages/HomePage";
 import LoadingPage from "./pages/LoadingPage";
 import ResponseSentPage from "./pages/ResponseSentPage";
+import ResponsesPage from "./pages/ResponsesPage";
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -20,11 +21,12 @@ function App() {
     if (!isAuthenticated) return <Route path="/" element={<HomePage />} />;
     return (
       <Route path="/" element={<DashboardLayout />}>
-        <Route index element={<Dashboardpage />} />
+        <Route index element={<DashboardPage />} />
         <Route path="forms">
           <Route index element={<FormsPage />} />
           <Route path="edit/:id?" element={<EditFormPage />} />
           <Route path="preview/:id?" element={<FormPage preview />} />
+          <Route path="responses/:id" element={<ResponsesPage />} />
         </Route>
         <Route path="settings" element={<SettingsPage />} />
       </Route>

@@ -85,6 +85,7 @@ type ResponseAnswerType = string | number | CheckedValue;
 
 interface ResponseQuestion {
   id: string;
+  title?: string;
   sectionId: string;
   type: QuestionType;
   value?: ResponseAnswerType;
@@ -92,10 +93,17 @@ interface ResponseQuestion {
 
 interface ResponseSection {
   id: string;
+  title?: string;
   questions: ResponseQuestion[];
 }
 
 interface FormResponse {
+  id?: string;
   form: string;
   sections: ResponseSection[];
+}
+
+interface FormResponses {
+  form: string;
+  responses: FormResponse[];
 }
