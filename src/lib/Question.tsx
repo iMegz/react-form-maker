@@ -1,5 +1,6 @@
 import {
   Dispatch,
+  PropsWithChildren,
   ReactNode,
   SetStateAction,
   createContext,
@@ -9,7 +10,8 @@ import {
 import Select from "../components/Select";
 import { DateType, QuestionType as QuestionTypeEnum } from "./enums";
 import { v4 as uuidv4 } from "uuid";
-import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
+import { CloseOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import questionValidator from "../validators/questionValidator";
 
 type ExtraFields = {
   dateType?: DateType;
@@ -305,6 +307,69 @@ function EditChoices() {
   );
 }
 
+function EditWrapper({ children }: PropsWithChildren) {
+  const { get, set } = useQuestionContext();
+  if (get.edit !== false) return <>{children}</>;
+
+  function onClick() {
+    set.edit(true);
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-gray-400">{QuestionTypeEnum[get.type]}</span>
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-lg font-semibold">{get.question}</h2>
+        <button className="btn-text" onClick={onClick}>
+          <EditOutlined />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export type OnValidateResult =
+  | {
+      success: true;
+      question: Question$;
+    }
+  | {
+      success: false;
+      errors: string[];
+    };
+
+interface EditSaveProps {
+  onValidate?: (result: OnValidateResult) => void;
+}
+
+function EditSave({ onValidate }: EditSaveProps) {
+  const { get } = useQuestionContext();
+
+  if (get.edit === false) return null;
+
+  function onClick() {
+    if (!onValidate) return;
+    const { ID, extra, question, required, type } = get;
+    const data: Question$ = { id: ID, question, required, type, extra };
+    const validation = questionValidator.safeParse(data);
+
+    const success = validation.success;
+    if (!success) {
+      const errors = validation.error.flatten().fieldErrors;
+      const errorsList = Object.keys(errors).map((key) => {
+        return errors[key as keyof typeof errors]![0];
+      });
+      onValidate({ success, errors: errorsList });
+    } else onValidate({ success, question: validation.data as Question$ });
+  }
+
+  return (
+    <button type="submit" className="btn-primary" onClick={onClick}>
+      Save
+    </button>
+  );
+}
+
 // Form question component
 
 // Helper components
@@ -352,4 +417,6 @@ export const Edit = {
   Other: EditOther,
   MaxChoices: EditMaxChoices,
   Choices: EditChoices,
+  Wrapper: EditWrapper,
+  Save: EditSave,
 };
