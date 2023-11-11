@@ -9,9 +9,9 @@ import {
   OtherCheckbox,
   RequiredCheckbox,
 } from "./extraFields";
-import { QuestionSchema } from "../../validators/formValidators";
+import { QuestionSchema } from "../../validators/FromSchema";
 import { EditOutlined } from "@ant-design/icons";
-import FormError from "../Form/FormError";
+import FormError from "../FormError";
 
 const MAX_CHOICES = 4;
 

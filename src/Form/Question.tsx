@@ -1,36 +1,20 @@
 import {
-  Dispatch,
   PropsWithChildren,
   ReactNode,
-  SetStateAction,
   createContext,
   useContext,
   useState,
 } from "react";
 import Select from "../components/Select";
-import { DateType, QuestionType as QuestionTypeEnum } from "./enums";
+import { DateType, QuestionType as QuestionTypeEnum } from "../lib/enums";
 import { v4 as uuidv4 } from "uuid";
 import { CloseOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import questionValidator from "../validators/questionValidator";
-
-type ExtraFields = {
-  dateType?: DateType;
-  choices?: string[];
-  other?: boolean;
-  maxChoices?: number;
-};
-
-export type Question$ = {
-  id: string;
-  type: QuestionType;
-  question: string;
-  required: boolean;
-  extra: ExtraFields;
-};
+import QuestionSchema from "../validators/QuestionSchema";
+import FormError from "../components/FormError";
 
 interface QuestionProps {
   children?: ReactNode;
-  question?: Question$;
+  question: Question;
   MAX_CHOICES?: number;
 }
 
@@ -43,13 +27,15 @@ interface QuestionContext {
     extra: ExtraFields;
     edit: boolean | undefined;
     MAX_CHOICES: number;
+    errors: string[] | undefined;
   };
   set: {
-    type: Dispatch<SetStateAction<QuestionType>>;
-    question: Dispatch<SetStateAction<string>>;
-    required: Dispatch<SetStateAction<boolean>>;
-    extra: Dispatch<SetStateAction<ExtraFields>>;
-    edit: Dispatch<SetStateAction<boolean | undefined>>;
+    type: SetState<QuestionType>;
+    question: SetState<string>;
+    required: SetState<boolean>;
+    extra: SetState<ExtraFields>;
+    edit: SetState<boolean | undefined>;
+    errors: SetState<string[] | undefined>;
   };
 }
 
@@ -68,23 +54,26 @@ export default function Question({
   question: q,
   MAX_CHOICES = 4,
 }: QuestionProps) {
-  const id = q?.id || uuidv4();
+  const newQuestion = /^NEW_[0-9]+/.test(q.id);
+  const id = newQuestion ? uuidv4() : q.id;
 
   // States
-  const [type, setType] = useState(q?.type || "SHORT_ANSWER");
-  const [required, setRequired] = useState(q?.required || false);
-  const [extra, setExtra] = useState<ExtraFields>(q?.extra || {});
-  const [question, setQuestion] = useState(q?.question || "");
-  const [edit, setEdit] = useState(q ? false : undefined);
+  const [type, setType] = useState(q.type);
+  const [required, setRequired] = useState(q.required);
+  const [extra, setExtra] = useState<ExtraFields>(q.extra);
+  const [question, setQuestion] = useState(q.question);
+  const [edit, setEdit] = useState(newQuestion ? undefined : false);
+  const [errors, setError] = useState<string[]>();
 
   const ctxInit: QuestionContext = {
-    get: { ID: id, type, question, required, extra, edit, MAX_CHOICES },
+    get: { ID: id, type, question, required, extra, edit, MAX_CHOICES, errors },
     set: {
       type: setType,
       question: setQuestion,
       required: setRequired,
       extra: setExtra,
       edit: setEdit,
+      errors: setError,
     },
   };
 
@@ -328,30 +317,15 @@ function EditWrapper({ children }: PropsWithChildren) {
   );
 }
 
-export type OnValidateResult =
-  | {
-      success: true;
-      question: Question$;
-    }
-  | {
-      success: false;
-      errors: string[];
-    };
-
-interface EditSaveProps {
-  onValidate?: (result: OnValidateResult) => void;
-}
-
-function EditSave({ onValidate }: EditSaveProps) {
-  const { get } = useQuestionContext();
+function EditSave({ onSave }: { onSave: (question: Question) => void }) {
+  const { get, set } = useQuestionContext();
 
   if (get.edit === false) return null;
 
   function onClick() {
-    if (!onValidate) return;
     const { ID, extra, question, required, type } = get;
-    const data: Question$ = { id: ID, question, required, type, extra };
-    const validation = questionValidator.safeParse(data);
+    const data: Question = { id: ID, question, required, type, extra };
+    const validation = QuestionSchema.safeParse(data);
 
     const success = validation.success;
     if (!success) {
@@ -359,8 +333,13 @@ function EditSave({ onValidate }: EditSaveProps) {
       const errorsList = Object.keys(errors).map((key) => {
         return errors[key as keyof typeof errors]![0];
       });
-      onValidate({ success, errors: errorsList });
-    } else onValidate({ success, question: validation.data as Question$ });
+      set.errors(errorsList);
+    } else {
+      set.edit(false);
+      set.errors(undefined);
+
+      onSave(validation.data as Question);
+    }
   }
 
   return (
@@ -370,7 +349,20 @@ function EditSave({ onValidate }: EditSaveProps) {
   );
 }
 
-// Form question component
+function EditDel({ onDelete }: { onDelete: () => void }) {
+  return (
+    <button className="btn-danger" onClick={onDelete}>
+      Delete
+    </button>
+  );
+}
+
+function EditError() {
+  const { get } = useQuestionContext();
+  return <FormError errors={get.errors} />;
+}
+
+// Form question components
 
 // Helper components
 function AddChoiceButton({ index }: { index: number }) {
@@ -419,4 +411,6 @@ export const Edit = {
   Choices: EditChoices,
   Wrapper: EditWrapper,
   Save: EditSave,
+  Del: EditDel,
+  Error: EditError,
 };

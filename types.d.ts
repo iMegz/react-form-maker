@@ -1,14 +1,9 @@
-/*********\
-| General |
-\*********/
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 type InputChangeEvent = React.ChangeEvent<HTMLInputElement>;
 type TextAreaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 type TextAreaChangeEvent = React.ChangeEvent<HTMLTextAreaElement>;
+type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
-/***********\
-| Questions |
-\***********/
 type QuestionType =
   | "SHORT_ANSWER"
   | "PARAGRAPH"
@@ -20,43 +15,21 @@ type QuestionType =
 
 type DateType = "date" | "time" | "datetime-local";
 
-interface CheckedValue {
-  checked: { [key: string]: boolean };
-  other: string;
-}
-
-// Default question props without type
-interface DefaultQuestion {
-  id: string;
-  type: Exclude<QuestionType, "DATE" | "DROPDOWN" | "MCQ">;
-  question: string;
-  required?: boolean;
+interface ExtraFields {
   dateType?: DateType;
   choices?: string[];
   other?: boolean;
   maxChoices?: number;
 }
 
-interface DateQuestion extends DefaultQuestion {
-  type: "DATE";
-  dateType: DateType;
-  choices?: undefined;
-  other?: undefined;
-  maxChoices?: undefined;
+interface Question {
+  id: string;
+  type: QuestionType;
+  question: string;
+  required: boolean;
+  extra: ExtraFields;
 }
 
-interface DropdownQuestion extends DefaultQuestion {
-  type: "DROPDOWN";
-  choices: string[];
-  dateType?: undefined;
-}
-
-interface MCQuestion extends DropdownQuestion {
-  type: "MCQ";
-  maxChoices: number;
-}
-
-type Question = DefaultQuestion | DateQuestion | DropdownQuestion | MCQuestion;
 /*******\
 | Forms |
 \*******/
@@ -67,19 +40,22 @@ type Section = {
   questions: Question[];
 };
 
-interface NewForm {
+interface FormInfo {
+  id?: string;
   title: string;
-  description?: string;
-  // coverImg?: File | string;
-  isPublic?: boolean;
+  description: string;
+  isPublic: boolean;
+}
+
+interface NewForm extends FormInfo {
   sections: Section[];
 }
 
 interface Form extends NewForm {
   id: string;
-  // coverImg: string;
 }
 
+// --------------------------------
 // Form application
 type ResponseAnswerType = string | number | CheckedValue;
 
@@ -107,3 +83,8 @@ interface FormResponses {
   form: string;
   responses: FormResponse[];
 }
+
+// interface CheckedValue {
+//   checked: { [key: string]: boolean };
+//   other: string;
+// }

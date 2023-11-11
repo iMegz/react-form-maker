@@ -21,7 +21,7 @@ const DefaultQuestionSchema = z.object({
   type: QuestionTypeSchema,
   question: z.string().min(3, messages.minmax("Question", 3)),
   required: z.boolean().optional(),
-  extra: z.object({}),
+  extra: z.object({}).optional(),
 });
 
 const DateQuestionSchema = DefaultQuestionSchema.extend({
