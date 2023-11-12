@@ -1,6 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import {
   ReactNode,
+  RefObject,
   createContext,
   useContext,
   useEffect,
@@ -13,10 +14,14 @@ import { createPortal } from "react-dom";
 import QuestionEdit from "./QuestionEdit";
 import FormSchema from "../validators/FromSchema";
 import FormError from "../components/FormError";
+import useForm from "../hooks/useForm";
+import QuestionSubmission from "./QuestionSubmission";
 
 interface Ids {
   [key: string]: string[];
 }
+
+type Register = (id: string) => { onChange: (value: string) => void };
 
 interface FormContext {
   get: {
@@ -30,12 +35,16 @@ interface FormContext {
     sections: SetState<Section[]>;
     errors: SetState<string[] | undefined>;
   };
+  ref: RefObject<HTMLFormElement>;
 }
 
 interface FormProps {
   children?: ReactNode;
   form: Form | NewForm;
 }
+
+type OnSaveFn = (form: NewForm) => Promise<any>;
+type OnSubmitFn = (values: FormResponse) => Promise<any>;
 
 const ctx = createContext<FormContext | null>(null);
 
@@ -57,6 +66,7 @@ export default function Form({ children, form }: FormProps) {
   const [formInfo, setFormInfo] = useState<FormInfo>(initFormInfo);
   const [sections, setSections] = useState<Section[]>(form?.sections || []);
   const [errors, setErrors] = useState<string[] | undefined>(undefined);
+  const ref = useRef<HTMLFormElement>(null);
 
   const ids = sections.reduce((prev, curr) => {
     prev[curr.id] = curr.questions.map(({ id }) => id);
@@ -65,12 +75,23 @@ export default function Form({ children, form }: FormProps) {
 
   const ctxInit: FormContext = {
     get: { formInfo, sections, ids, errors },
-    set: { formInfo: setFormInfo, sections: setSections, errors: setErrors },
+    set: {
+      formInfo: setFormInfo,
+      sections: setSections,
+      errors: setErrors,
+    },
+    ref,
   };
 
   return (
     <ctx.Provider value={ctxInit}>
-      <div className="form-holder">{children}</div>
+      <form
+        className="form-holder"
+        ref={ref}
+        onSubmit={(e) => e.preventDefault()}
+      >
+        {children}
+      </form>
     </ctx.Provider>
   );
 }
@@ -227,8 +248,8 @@ function EditSection({ section }: { section: Section }) {
 
 function EditDelSection({ id }: { id: string }) {
   const { get, set } = useFormContext();
-  if (get.sections.length < 2) return null;
   const [modal, setModal] = useState<ReactNode | null>(null);
+  if (get.sections.length < 2) return null;
 
   function handleDelSection() {
     set.sections((old) => old.filter((section) => section.id !== id));
@@ -264,7 +285,7 @@ function EditDelSection({ id }: { id: string }) {
   );
 }
 
-function EditSave({ onSave }: { onSave?: (form: NewForm) => Promise<any> }) {
+function EditSave({ onSave }: { onSave?: OnSaveFn }) {
   const { get, set } = useFormContext();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -282,9 +303,6 @@ function EditSave({ onSave }: { onSave?: (form: NewForm) => Promise<any> }) {
 
       const success = validation.success;
       if (!success) {
-        console.log(form);
-        console.log(validation.error);
-
         const errors = validation.error.flatten().fieldErrors;
         const errorsList = Object.keys(errors).map((key) => {
           return errors[key as keyof typeof errors]![0];
@@ -316,12 +334,163 @@ function EditError() {
   return <FormError errors={get.errors} />;
 }
 
+// Form question components
+function SubmissionQuestions({ onSubmit }: { onSubmit: OnSubmitFn }) {
+  const { get, ref } = useFormContext();
+  const id = get.formInfo.id!;
+  const { formInfo, sections } = get;
+  const form: Form = { id, ...formInfo, sections };
+  const { values, register } = useForm(form);
+
+  function handleOnSubmit() {
+    if (ref.current?.checkValidity()) {
+      onSubmit(values);
+    }
+  }
+
+  return (
+    <>
+      <SubmissionSections register={register} />
+      <SubmissionSubmit onSubmit={handleOnSubmit} />
+    </>
+  );
+}
+
+function SubmissionFormInfo() {
+  const { get } = useFormContext();
+  const { title, description } = get.formInfo;
+  return (
+    <section className="pb-0 form-section">
+      <div className="section-header">
+        <h1>{title}</h1>
+      </div>
+
+      <div className="section-body">
+        <p>{description}</p>
+      </div>
+    </section>
+  );
+}
+
+function SubmissionSections({ register }: { register: Register }) {
+  const { get } = useFormContext();
+
+  return get.sections.map((section, i) => (
+    <section
+      style={{ zIndex: `max(0, ${9999 - i})` }}
+      className="form-section"
+      key={section.id}
+    >
+      <div className="section-header">
+        <h1>{section.title}</h1>
+      </div>
+      <div className="section-body">
+        {section.questions.map((q, i) => {
+          return (
+            <div
+              key={q.id}
+              className="flex flex-col gap-4 pb-3 border-b border-b-gray-300 last-of-type:border-b-0"
+              style={{ zIndex: `max(0, ${9999 - i})` }}
+            >
+              <div className="flex flex-col gap-2 ">
+                <h2 className="text-lg font-semibold">
+                  {q.question}
+                  {q.required && (
+                    <span className="inline-block ml-1 text-danger">*</span>
+                  )}
+                </h2>
+                <QuestionSubmission question={q} {...register(q.id)} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  ));
+}
+
+function SubmissionSubmit({ onSubmit }: { onSubmit: () => void }) {
+  return (
+    <button
+      type="submit"
+      className="btn-primary w-fit"
+      onClick={() => onSubmit()}
+    >
+      Submit
+    </button>
+  );
+}
+// function SubmissionSections({ onSubmit }: { onSubmit?: OnSubmitFn }) {
+//   const { get } = useFormContext();
+//   const id = get.formInfo.id!;
+//   const { formInfo, sections } = get;
+//   const form: Form = { id, ...formInfo, sections };
+//   const { values, register } = useForm(form);
+
+//   function handleOnSubmit() {
+//     if (onSubmit) onSubmit(values);
+//   }
+
+//   function Sections() {
+//     return sections.map((section, i) => (
+//       <section
+//         style={{ zIndex: `max(0, ${9999 - i})` }}
+//         className="form-section"
+//         key={section.id}
+//       >
+//         <div className="section-header">
+//           <h1>{section.title}</h1>
+//         </div>
+//         <div className="section-body">
+//           {section.questions.map((q, i) => {
+//             return (
+//               <div
+//                 key={q.id}
+//                 className="flex flex-col gap-4 pb-3 border-b border-b-gray-300 last-of-type:border-b-0"
+//                 style={{ zIndex: `max(0, ${9999 - i})` }}
+//               >
+//                 <div className="flex flex-col gap-2 ">
+//                   <h2 className="text-lg font-semibold">
+//                     {q.question}
+//                     {q.required && (
+//                       <span className="inline-block ml-1 text-danger">*</span>
+//                     )}
+//                   </h2>
+//                   <QuestionSubmission question={q} {...register(q.id)} />
+//                 </div>
+//               </div>
+//             );
+//           })}
+//         </div>
+//       </section>
+//     ));
+//   }
+
+//   return (
+//     <>
+//       <Sections />
+//       <button
+//         type="submit"
+//         className="btn-primary w-fit"
+//         onClick={handleOnSubmit}
+//       >
+//         Submit
+//       </button>
+//     </>
+//   );
+// }
+
 export const Edit = {
   FormInfo: EditFormInfo,
   Sections: EditSections,
   AddSection: EditAddSection,
   Save: EditSave,
   Error: EditError,
+};
+
+export const Submission = {
+  Questions: SubmissionQuestions,
+  FormInfo: SubmissionFormInfo,
 };
 
 function newQuestion(): Question {

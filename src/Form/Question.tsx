@@ -2,7 +2,9 @@ import {
   PropsWithChildren,
   ReactNode,
   createContext,
+  useCallback,
   useContext,
+  useRef,
   useState,
 } from "react";
 import Select from "../components/Select";
@@ -11,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { CloseOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import QuestionSchema from "../validators/QuestionSchema";
 import FormError from "../components/FormError";
+import CustomSelect from "../components/CustomSelect";
 
 interface QuestionProps {
   children?: ReactNode;
@@ -37,6 +40,14 @@ interface QuestionContext {
     edit: SetState<boolean | undefined>;
     errors: SetState<string[] | undefined>;
   };
+}
+
+type SubmissionQuestion = {
+  [key in QuestionType]: ({ onChange }: SubmissionProps) => JSX.Element;
+};
+
+interface SubmissionProps {
+  onChange: (value: string) => void;
 }
 
 const ctx = createContext<QuestionContext | null>(null);
@@ -162,7 +173,7 @@ function EditDateType() {
 
   const dateTypes = Object.entries(DateType).map((value) => ({
     label: value[1].split("-")[0],
-    value: value[0],
+    value: value[1],
   }));
 
   const value = get.extra.dateType;
@@ -298,7 +309,8 @@ function EditChoices() {
 
 function EditWrapper({ children }: PropsWithChildren) {
   const { get, set } = useQuestionContext();
-  if (get.edit !== false) return <>{children}</>;
+  if (get.edit !== false)
+    return <div className="flex flex-col gap-4">{children}</div>;
 
   function onClick() {
     set.edit(true);
@@ -363,6 +375,248 @@ function EditError() {
 }
 
 // Form question components
+function SubmissionShortAnswer({ onChange }: SubmissionProps) {
+  const { get } = useQuestionContext();
+
+  function handleOnChange({ target }: InputChangeEvent) {
+    onChange(target.value);
+  }
+
+  return (
+    <div className="form-group">
+      <input
+        id={get.ID}
+        type="text"
+        required={get.required}
+        onChange={handleOnChange}
+      />
+    </div>
+  );
+}
+
+function SubmissionParagraph({ onChange }: SubmissionProps) {
+  const { get } = useQuestionContext();
+
+  function handleOnChange({ target }: TextAreaChangeEvent) {
+    onChange(target.value);
+  }
+
+  return (
+    <div className="form-group">
+      <textarea
+        id={get.ID}
+        rows={3}
+        required={get.required}
+        onChange={handleOnChange}
+      />
+    </div>
+  );
+}
+
+function SubmissionNumber({ onChange }: SubmissionProps) {
+  const { get } = useQuestionContext();
+
+  function handleOnChange({ target }: InputChangeEvent) {
+    onChange(target.value);
+  }
+
+  return (
+    <div className="form-group">
+      <input
+        id={get.ID}
+        type="number"
+        required={get.required}
+        onChange={handleOnChange}
+      />
+    </div>
+  );
+}
+
+function SubmissionDate({ onChange }: SubmissionProps) {
+  const { get } = useQuestionContext();
+
+  function handleOnChange({ target }: InputChangeEvent) {
+    onChange(target.value);
+  }
+
+  return (
+    <div className="form-group">
+      <input
+        id={get.ID}
+        type={get.extra.dateType}
+        required={get.required}
+        onChange={handleOnChange}
+      />
+    </div>
+  );
+}
+
+function SubmissionEmail({ onChange }: SubmissionProps) {
+  const { get } = useQuestionContext();
+
+  function handleOnChange({ target }: InputChangeEvent) {
+    onChange(target.value);
+  }
+
+  return (
+    <div className="form-group">
+      <input
+        id={get.ID}
+        type="email"
+        required={get.required}
+        onChange={handleOnChange}
+        placeholder="example@gmail.com"
+      />
+    </div>
+  );
+}
+
+function SubmissionDropdown({ onChange }: SubmissionProps) {
+  const { get } = useQuestionContext();
+  const [other, setOther] = useState(false);
+
+  // Get choices
+  const items = get.extra.choices!.map((value) => ({ label: value, value }));
+  if (get.extra.other) items?.push({ label: "Other", value: "other" });
+
+  function handleOnSelect(value: string) {
+    const other = value === "other";
+    setOther(other);
+    onChange(other ? "" : value);
+  }
+
+  function handleOnOtherChange({ target }: InputChangeEvent) {
+    onChange(target.value);
+  }
+
+  function renderOther() {
+    if (!other) return null;
+    return (
+      <div className="form-group">
+        <input
+          id={`${get.ID}_other`}
+          type="text"
+          required={get.required}
+          onChange={handleOnOtherChange}
+          placeholder="Other"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <CustomSelect
+        items={items}
+        required={get.required}
+        onChange={handleOnSelect}
+      />
+      {renderOther()}
+    </>
+  );
+}
+
+function SubmissionMCQ({ onChange }: SubmissionProps) {
+  const { get } = useQuestionContext();
+  const [otherValue, setOtherValue] = useState<string>("");
+  const [, updateState] = useState({});
+  const ref = useRef<HTMLInputElement[]>([]);
+  const forceUpdate = useCallback(() => updateState({}), []);
+
+  const maxChoices = get.extra.maxChoices!;
+  const type = maxChoices > 1 ? "checkbox" : "radio";
+  const hasOther = get.extra.other;
+  const checkedCount = ref.current.reduce(
+    (prev, curr) => prev + +curr.checked,
+    0
+  );
+  const choices = [...get.extra.choices!];
+  if (hasOther) choices.push("Other");
+
+  const setRef = (index: number) => {
+    return (e: HTMLInputElement) => (ref.current[index] = e);
+  };
+
+  function handleOnChange(other = otherValue) {
+    let values = ref.current.reduce((prev, curr) => {
+      const value = choices[+curr.value];
+      const checked = curr.checked;
+      if (checked && value === "Other") return prev + `,${other}`;
+      return prev + (curr.checked ? `,${value}` : "");
+    }, "");
+    onChange(values.length ? values.substring(1) : "");
+  }
+
+  function renderOther() {
+    if (!hasOther) return null;
+    const index = ref.current.length - 1;
+
+    return (
+      <div className="form-group">
+        <input
+          id={`${get.ID}_other`}
+          style={{ padding: "2px 10px" }}
+          type="text"
+          placeholder="Other"
+          required={ref.current[index]?.checked && get.required}
+          disabled={
+            !ref.current[index]?.checked &&
+            maxChoices! > 1 &&
+            checkedCount === maxChoices
+          }
+          onChange={({ target }) => {
+            setOtherValue(target.value);
+            handleOnChange(target.value);
+          }}
+          onClick={() => {
+            ref.current[index].checked = true;
+            forceUpdate();
+          }}
+        />
+      </div>
+    );
+  }
+
+  function renderChoices() {
+    const otherIndex = choices.length - 1;
+
+    function handleOnSelect({ target }: InputChangeEvent) {
+      const value = +target.value;
+      if (hasOther && value === otherIndex) onChange(otherValue);
+      else {
+        if (type === "radio") onChange(choices[value]);
+        else handleOnChange();
+      }
+    }
+
+    return choices.map((choice, i) => {
+      const label = <label htmlFor={`${get.ID}_choice_${i}`}>{choice}</label>;
+
+      return (
+        <div className="flex gap-2" key={i}>
+          <input
+            type={type}
+            required={!checkedCount && get.required}
+            className="accent-primary"
+            name={get.ID}
+            id={`${get.ID}_choice_${i}`}
+            onChange={handleOnSelect}
+            value={i}
+            ref={setRef(i)}
+            disabled={
+              !ref.current[i]?.checked &&
+              maxChoices! > 1 &&
+              checkedCount === maxChoices
+            }
+          />
+          {hasOther && i === choices.length - 1 ? renderOther() : label}
+        </div>
+      );
+    });
+  }
+
+  return <ul className="flex flex-col w-full gap-3">{renderChoices()}</ul>;
+}
 
 // Helper components
 function AddChoiceButton({ index }: { index: number }) {
@@ -414,3 +668,19 @@ export const Edit = {
   Del: EditDel,
   Error: EditError,
 };
+
+const submission: SubmissionQuestion = {
+  SHORT_ANSWER: SubmissionShortAnswer,
+  PARAGRAPH: SubmissionParagraph,
+  NUMBER: SubmissionNumber,
+  DATE: SubmissionDate,
+  EMAIL: SubmissionEmail,
+  DROPDOWN: SubmissionDropdown,
+  MCQ: SubmissionMCQ,
+};
+
+export function Submission({ onChange }: SubmissionProps) {
+  const { get } = useQuestionContext();
+  const Element = submission[get.type];
+  return <Element onChange={onChange} />;
+}

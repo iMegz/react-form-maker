@@ -57,14 +57,13 @@ interface Form extends NewForm {
 
 // --------------------------------
 // Form application
-type ResponseAnswerType = string | number | CheckedValue;
 
 interface ResponseQuestion {
   id: string;
   title?: string;
   sectionId: string;
   type: QuestionType;
-  value?: ResponseAnswerType;
+  value?: string;
 }
 
 interface ResponseSection {
