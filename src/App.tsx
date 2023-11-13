@@ -12,6 +12,7 @@ import HomePage from "./pages/HomePage";
 import LoadingPage from "./pages/LoadingPage";
 import ResponseSentPage from "./pages/ResponseSentPage";
 import ResponsesPage from "./pages/ResponsesPage";
+import ResponsePage from "./pages/ResponsePage";
 
 function App() {
   const { isLoading } = useAuth0();
@@ -28,6 +29,7 @@ function App() {
             <Route path="edit/:id?" element={<EditFormPage />} />
             <Route path="preview/:id?" element={<FormPage preview />} />
             <Route path="responses/:id" element={<ResponsesPage />} />
+            <Route path="response/:id" element={<ResponsePage />} />
           </Route>
           <Route path="settings" element={<SettingsPage />} />
         </Route>
