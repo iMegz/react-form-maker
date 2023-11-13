@@ -7,13 +7,12 @@ import {
   useRef,
   useState,
 } from "react";
-import Select from "../components/Select";
-import { DateType, QuestionType as QuestionTypeEnum } from "../lib/enums";
+import { DateType, QuestionType as QuestionTypeEnum } from "../../lib/enums";
 import { v4 as uuidv4 } from "uuid";
 import { CloseOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import QuestionSchema from "../validators/QuestionSchema";
-import FormError from "../components/FormError";
-import CustomSelect from "../components/CustomSelect";
+import QuestionSchema from "../../validators/QuestionSchema";
+import FormError from "../FormError";
+import CustomSelect from "../CustomSelect";
 
 interface QuestionProps {
   children?: ReactNode;
@@ -135,11 +134,10 @@ function EditType() {
   return (
     <div className="form-group">
       <label htmlFor={`${get.ID}_type`}>Type</label>
-      <Select
-        id={`${get.ID}_type`}
+      <CustomSelect
         items={types}
-        selectedIndex={0}
-        onSelect={onChange}
+        onChange={onChange}
+        defaultValue={types[0].value}
       />
     </div>
   );
@@ -177,7 +175,7 @@ function EditDateType() {
   }));
 
   const value = get.extra.dateType;
-  const selectedindex = dateTypes.findIndex((v) => v.value === value);
+  const defaultValue = dateTypes.find((v) => v.value === value);
 
   function onChange(value: string) {
     const dateType = value as DateType;
@@ -187,11 +185,10 @@ function EditDateType() {
   return (
     <div className="form-group">
       <label htmlFor={`${get.ID}_dateType`}>Field type</label>
-      <Select
-        id={`${get.ID}_dateType`}
+      <CustomSelect
         items={dateTypes}
-        onSelect={onChange}
-        selectedIndex={selectedindex === -1 ? 0 : selectedindex}
+        onChange={onChange}
+        defaultValue={defaultValue?.value || dateTypes[0].value}
       />
     </div>
   );

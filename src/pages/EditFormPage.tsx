@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
-import Form, { Edit } from "../Form/Form";
+import Form, { Edit } from "../components/Form/Form";
 
 type Section = {
   id: string;

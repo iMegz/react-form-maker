@@ -73,7 +73,7 @@ const CustomSelect = ({
       className="relative flex items-center w-full p-3 bg-white border border-gray-700 rounded-md outline-none cursor-pointer"
       onClick={toggle}
     >
-      <span>
+      <span className="capitalize">
         {(value && valueToLabel[value]) || placeholder || "Select an option"}
       </span>
       <input

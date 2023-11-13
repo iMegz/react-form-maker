@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import NotFound from "./NotFound";
-import Form, { Submission } from "../Form/Form";
+import Form, { Submission } from "../components/Form/Form";
 
 const FormPage = ({ preview }: { preview?: boolean }) => {
   const [form, setForm] = useState<Form | null | undefined>(null);
