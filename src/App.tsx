@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import FormsPage from "./pages/FormsPage";
-import DashboardPage from "./pages/Dashboardpage";
+import DashboardPage from "./pages/DashboardPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import EditFormPage from "./pages/EditFormPage";
@@ -14,29 +14,31 @@ import ResponseSentPage from "./pages/ResponseSentPage";
 import ResponsesPage from "./pages/ResponsesPage";
 
 function App() {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isLoading } = useAuth0();
 
-  function setRoutes() {
+  function renderRoutes() {
     if (isLoading) return <Route path="*" element={<LoadingPage />} />;
-    if (!isAuthenticated) return <Route path="/" element={<HomePage />} />;
     return (
-      <Route path="/" element={<DashboardLayout />}>
-        <Route index element={<DashboardPage />} />
-        <Route path="forms">
-          <Route index element={<FormsPage />} />
-          <Route path="edit/:id?" element={<EditFormPage />} />
-          <Route path="preview/:id?" element={<FormPage preview />} />
-          <Route path="responses/:id" element={<ResponsesPage />} />
+      <>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="forms">
+            <Route index element={<FormsPage />} />
+            <Route path="edit/:id?" element={<EditFormPage />} />
+            <Route path="preview/:id?" element={<FormPage preview />} />
+            <Route path="responses/:id" element={<ResponsesPage />} />
+          </Route>
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
-        <Route path="settings" element={<SettingsPage />} />
-      </Route>
+      </>
     );
   }
 
   return (
     <div className="flex bg-slate-100 max-h-max">
       <Routes>
-        {setRoutes()}
+        {renderRoutes()}
         <Route path="form/:id" element={<FormPage />} />
         <Route path="response/sent" element={<ResponseSentPage />} />
         <Route path="*" element={<NotFound />} />

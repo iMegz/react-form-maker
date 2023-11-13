@@ -104,7 +104,7 @@ const FormsPage = () => {
     return forms.map(({ id, title, description }) => (
       <tr key={id}>
         <td className="text-xs md:text-base">
-          <Link to={"/forms/edit/" + id}>{title}</Link>
+          <Link to={"edit/" + id}>{title}</Link>
         </td>
 
         <td className="hidden lg:table-cell ">
@@ -112,21 +112,21 @@ const FormsPage = () => {
         </td>
 
         <td className="flex gap-0 md:gap-2">
-          <Link to={"/forms/preview/" + id}>
+          <Link to={"preview/" + id}>
             <button className="btn-text-primary">
               <EyeFilled />
               <span className="hidden md:inline">Preview</span>
             </button>
           </Link>
 
-          <Link to={"/forms/responses/" + id}>
+          <Link to={"responses/" + id}>
             <button className="btn-text">
               <UnorderedListOutlined />
               <span className="hidden md:inline">Responses</span>
             </button>
           </Link>
 
-          <Link to={"/forms/edit/" + id}>
+          <Link to={"edit/" + id}>
             <button className="btn-text-warning">
               <EditFilled />
               <span className="hidden md:inline">Edit</span>
@@ -149,7 +149,7 @@ const FormsPage = () => {
     <div>
       <h1>Forms</h1>
 
-      <Link to="/forms/edit">
+      <Link to="edit">
         <button className="btn-primary">Create new form</button>
       </Link>
 

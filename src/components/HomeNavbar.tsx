@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import logo from "../assets/logo.svg";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -13,8 +13,23 @@ const links = [
 ];
 
 const HomeNavbar = () => {
-  const { loginWithRedirect } = useAuth0();
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
   const { ref, expand, setExpand } = useExpand();
+  const navigate = useNavigate();
+
+  function renderButton() {
+    const label = isAuthenticated ? "Dashboard" : "Login";
+    const onClick = () => {
+      if (isAuthenticated) return navigate("/dashboard/");
+      return loginWithRedirect();
+    };
+
+    return (
+      <button className="btn-primary" onClick={onClick}>
+        {label}
+      </button>
+    );
+  }
 
   function renderMenuItems() {
     return (
@@ -33,11 +48,7 @@ const HomeNavbar = () => {
             </HashLink>
           </li>
         ))}
-        <li>
-          <button className="btn-primary" onClick={() => loginWithRedirect()}>
-            Login
-          </button>
-        </li>
+        <li>{renderButton()}</li>
       </>
     );
   }

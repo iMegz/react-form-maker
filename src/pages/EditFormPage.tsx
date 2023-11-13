@@ -75,7 +75,8 @@ const EditFormPage = () => {
         headers: { authorization },
       });
 
-      if (res.status === 200 || res.status === 201) navigate("/forms");
+      if (res.status === 200 || res.status === 201)
+        navigate("/dashboard/forms");
       else alert("Failed to save form");
     } catch (error) {
       console.log(error);

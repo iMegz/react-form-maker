@@ -8,9 +8,9 @@ import logo from "../assets/logo.svg";
 import LogoutButton from "./LogoutButton";
 
 const links = [
-  { label: "Dashboard", path: "/", icon: <DashboardOutlined /> },
-  { label: "Forms", path: "/forms", icon: <FormOutlined /> },
-  { label: "Settings", path: "/settings", icon: <SettingOutlined /> },
+  { label: "Dashboard", path: "", icon: <DashboardOutlined /> },
+  { label: "Forms", path: "forms", icon: <FormOutlined /> },
+  { label: "Settings", path: "settings", icon: <SettingOutlined /> },
 ];
 
 const NavbarLink = ({ icon, label, path }: (typeof links)[0]) => {
@@ -18,7 +18,7 @@ const NavbarLink = ({ icon, label, path }: (typeof links)[0]) => {
     <li>
       <NavLink
         title={label}
-        to={path}
+        to={`/dashboard/${path}`}
         className={({ isActive }) => {
           const active = isActive
             ? "bg-primary hover:bg-primary text-white"
