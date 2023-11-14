@@ -1,7 +1,7 @@
 import {
   DashboardOutlined,
   FormOutlined,
-  SettingOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Link, NavLink } from "react-router-dom";
 import logo from "../assets/logo.svg";
@@ -10,7 +10,7 @@ import LogoutButton from "./LogoutButton";
 const links = [
   { label: "Dashboard", path: "", icon: <DashboardOutlined /> },
   { label: "Forms", path: "forms", icon: <FormOutlined /> },
-  { label: "Settings", path: "settings", icon: <SettingOutlined /> },
+  { label: "Profile", path: "profile", icon: <UserOutlined /> },
 ];
 
 const NavbarLink = ({ icon, label, path }: (typeof links)[0]) => {

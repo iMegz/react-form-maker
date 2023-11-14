@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import FormsPage from "./pages/FormsPage";
 import DashboardPage from "./pages/DashboardPage";
-import SettingsPage from "./pages/SettingsPage";
+import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import EditFormPage from "./pages/EditFormPage";
 import FormPage from "./pages/FormPage";
@@ -13,6 +13,7 @@ import LoadingPage from "./pages/LoadingPage";
 import ResponseSentPage from "./pages/ResponseSentPage";
 import ResponsesPage from "./pages/ResponsesPage";
 import ResponsePage from "./pages/ResponsePage";
+import PaymentSucessPage from "./pages/PaymentSucessPage";
 
 function App() {
   const { isLoading } = useAuth0();
@@ -31,7 +32,7 @@ function App() {
             <Route path="responses/:id" element={<ResponsesPage />} />
             <Route path="response/:id" element={<ResponsePage />} />
           </Route>
-          <Route path="settings" element={<SettingsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
       </>
     );
@@ -43,6 +44,7 @@ function App() {
         {renderRoutes()}
         <Route path="form/:id" element={<FormPage />} />
         <Route path="response/sent" element={<ResponseSentPage />} />
+        <Route path="payment_sucess" element={<PaymentSucessPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

@@ -1,3 +1,4 @@
+import { LogoutOutlined } from "@ant-design/icons";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const LogoutButton = () => {
@@ -5,12 +6,15 @@ const LogoutButton = () => {
 
   return (
     <button
-      className="btn-text"
+      className="btn-text-danger"
       onClick={() =>
         logout({ logoutParams: { returnTo: window.location.origin } })
       }
     >
-      Log Out
+      <span className="md:hidden">
+        <LogoutOutlined className="rotate-180" />
+      </span>
+      <span className="hidden md:inline">Log Out</span>
     </button>
   );
 };
