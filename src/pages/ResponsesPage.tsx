@@ -1,30 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import LoadingPage from "./LoadingPage";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import NotFound from "./NotFound";
 import { DeleteFilled } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import useRequest from "../hooks/useRequest";
 
+type ResponsesState = FormResponses | null | undefined;
 const ResponsesPage = () => {
   const { id } = useParams();
-  const [responses, setResponses] = useState<FormResponses | null | undefined>(
-    null
-  );
-  const { getAccessTokenSilently } = useAuth0();
+  const [responses, setResponses] = useState<ResponsesState>(null);
+  const request = useRequest();
 
   useEffect(() => {
-    async function fetchData() {
-      const path = `${import.meta.env.VITE_API}/response/get/all/${id}`;
-      const token = await getAccessTokenSilently();
-      const authorization = `Bearer ${token}`;
-      const res = await axios.get(path, { headers: { authorization } });
-
-      return res;
-    }
-
-    fetchData()
+    request(`/response/get/all/${id}`)
       .then((res) => setResponses(res.data))
       .catch((err) => {
         if (err.response.status === 404) setResponses(undefined);
@@ -60,17 +49,13 @@ const ResponsesPage = () => {
 
     const trimmed = (height || Infinity) > BOX_HEIGHT ? " trimmed-section" : "";
 
-    async function onDelete() {
+    function onDelete() {
       setResponses((old) => {
         const responses = old!.responses.filter(({ id }) => id !== response.id);
         return { ...old!, responses };
       });
 
-      const path = `${import.meta.env.VITE_API}/response/del/${response.id}`;
-      const token = await getAccessTokenSilently();
-      const authorization = `Bearer ${token}`;
-      const res = await axios.delete(path, { headers: { authorization } });
-      return res;
+      request(`/response/del/${response.id}`, { method: "delete" });
     }
 
     return (

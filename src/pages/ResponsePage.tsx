@@ -1,33 +1,26 @@
 import { useLocation, useParams } from "react-router-dom";
 import LoadingPage from "./LoadingPage";
 import { Fragment, useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import NotFound from "./NotFound";
+import useRequest from "../hooks/useRequest";
+import { Link } from "react-router-dom";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 function objectIdToDate(id: string) {
   return new Date(parseInt(id.substring(0, 8), 16) * 1000).toLocaleString();
 }
 
+type ResponseState = FormResponse | null | undefined;
+
 const ResponsePage = () => {
   const { state } = useLocation();
-  const { getAccessTokenSilently } = useAuth0();
-  const [response, setResponse] = useState<FormResponse | null | undefined>(
-    state
-  );
+  const [response, setResponse] = useState<ResponseState>(state);
   const { id } = useParams();
+  const request = useRequest();
 
   useEffect(() => {
     if (response !== null) return;
-    async function fetchData() {
-      const path = `${import.meta.env.VITE_API}/response/get/${id}`;
-      const token = await getAccessTokenSilently();
-      const authorization = `Bearer ${token}`;
-      const res = await axios.get(path, { headers: { authorization } });
-      return res;
-    }
-
-    fetchData()
+    request(`/response/get/${id}`)
       .then((res) => setResponse(res.data))
       .catch(() => setResponse(undefined));
   }, []);
@@ -37,8 +30,15 @@ const ResponsePage = () => {
 
   return (
     <div>
+      <Link
+        className="flex items-center gap-2 mb-2 text-lg w-fit"
+        to={`../responses/${response.form}`}
+      >
+        <ArrowLeftOutlined /> Back to responses
+      </Link>
       <h1>Response</h1>
       <h2 className="mb-2 font-semibold">@ {objectIdToDate(response.id!)}</h2>
+
       {response.sections.map((section) => {
         return (
           <Fragment key={section.id}>

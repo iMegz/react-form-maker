@@ -1,31 +1,19 @@
 import { useEffect, useState } from "react";
 import LoadingPage from "./LoadingPage";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import NotFound from "./NotFound";
 import Form, { Submission } from "../components/Form/Form";
+import useRequest from "../hooks/useRequest";
 
 const FormPage = ({ preview }: { preview?: boolean }) => {
   const [form, setForm] = useState<Form | null | undefined>(null);
   const { id } = useParams();
-  const { getAccessTokenSilently } = useAuth0();
   const navigate = useNavigate();
+  const request = useRequest();
 
   useEffect(() => {
-    async function fetchData() {
-      const isAuth = preview ? "" : "/unauth";
-      const path = `${import.meta.env.VITE_API}/forms${isAuth}/get/${id}`;
-      const headers: { authorization?: string } = {};
-      if (preview) {
-        const token = await getAccessTokenSilently();
-        const authorization = `Bearer ${token}`;
-        headers.authorization = authorization;
-      }
-      return axios.get(path, { headers });
-    }
-
-    fetchData()
+    const isAuth = preview ? "" : "/unauth";
+    request(`/forms${isAuth}/get/${id}`, { auth: preview })
       .then((res) => setForm(res.data))
       .catch(() => setForm(undefined));
   }, []);
@@ -34,16 +22,13 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
     if (preview) navigate("/response/sent");
     else {
       const data = { form: id, sections: values.sections };
-      const path = `${import.meta.env.VITE_API}/response/new`;
-      const token = await getAccessTokenSilently();
-      const authorization = `Bearer ${token}`;
-      await axios.post(path, data, { headers: { authorization } });
+      await request("/response/new", { method: "post", body: data });
       navigate("/response/sent");
     }
   }
 
   if (form === undefined) return <NotFound />;
-  if (form === null) return <LoadingPage />;
+  if (form === null) return <LoadingPage screen />;
 
   return (
     <div className={!preview ? "min-h-screen py-8 m-auto " : ""}>

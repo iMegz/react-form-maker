@@ -1,5 +1,3 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   CreditCardOutlined,
@@ -7,6 +5,7 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import InfoCard from "../components/InfoCard";
+import useRequest from "../hooks/useRequest";
 
 interface FormStats {
   forms: number;
@@ -14,30 +13,18 @@ interface FormStats {
 }
 
 const Dashboardpage = () => {
-  const { getAccessTokenSilently } = useAuth0();
   const [stats, setStats] = useState<FormStats>();
   const [subscription, setSubscription] = useState<string>();
+  const request = useRequest();
 
   useEffect(() => {
-    async function fetchStats() {
-      const token = await getAccessTokenSilently();
-      const path = `${import.meta.env.VITE_API}/stats/get/forms`;
-      const authorization = `Bearer ${token}`;
-      return axios.get(path, { headers: { authorization } });
-    }
-
-    async function fetchSubscription() {
-      const token = await getAccessTokenSilently();
-      const path = `${import.meta.env.VITE_API}/stats/get/sub`;
-      const authorization = `Bearer ${token}`;
-      return axios.get(path, { headers: { authorization } });
-    }
-
-    fetchSubscription().then((res) => setSubscription(res.data.subscription));
-
-    fetchStats().then((res) => {
+    request("/stats/get/forms").then((res) => {
       setStats(res.data);
     });
+
+    request("/stats/get/sub").then((res) =>
+      setSubscription(res.data.subscription)
+    );
   }, []);
 
   return (

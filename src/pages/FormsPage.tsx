@@ -9,26 +9,17 @@ import { Link } from "react-router-dom";
 import { ReactNode, useEffect, useState } from "react";
 import Modal from "../components/Modal";
 import { createPortal } from "react-dom";
-import axios from "axios";
-import { useAuth0 } from "@auth0/auth0-react";
 import Spinner from "../components/Spinner";
+import useRequest from "../hooks/useRequest";
 
 const FormsPage = () => {
   const [modal, setModal] = useState<ReactNode | null>(null);
   const [forms, setForms] = useState<Form[] | null>(null);
-  const { getAccessTokenSilently } = useAuth0();
+  const request = useRequest();
 
   // Get forms from backend
   useEffect(() => {
-    async function fetchData() {
-      const path = `${import.meta.env.VITE_API}/forms/get/all`;
-      const token = await getAccessTokenSilently();
-      const authorization = `Bearer ${token}`;
-      const res = await axios.get(path, { headers: { authorization } });
-      return res;
-    }
-
-    fetchData()
+    request("/forms/get/all")
       .then((res) => setForms(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -41,11 +32,7 @@ const FormsPage = () => {
     setModal(null);
 
     // Delete it from backend
-    const path = `${import.meta.env.VITE_API}/forms/del/${id}`;
-    const token = await getAccessTokenSilently();
-
-    const authorization = `Bearer ${token}`;
-    await axios.delete(path, { headers: { authorization } });
+    await request(`/forms/del/${id}`, { method: "delete" });
     cb();
   }
 

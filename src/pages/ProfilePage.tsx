@@ -1,7 +1,6 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Spinner from "../components/Spinner";
+import useRequest from "../hooks/useRequest";
 
 interface UserInfo {
   given_name: string;
@@ -35,37 +34,20 @@ function SkeletonProfile() {
 }
 
 const ProfilePage = () => {
-  const { getAccessTokenSilently } = useAuth0();
   const [sub, setSub] = useState<Subscription>();
   const [userInfo, setUserInof] = useState<UserInfo>();
+  const request = useRequest();
 
   async function onClick() {
-    const token = await getAccessTokenSilently();
-    const path = `${import.meta.env.VITE_API}/subscription/subscribe`;
-    const authorization = `Bearer ${token}`;
-    const res = await axios.post(path, null, { headers: { authorization } });
+    const res = await request("/subscription/subscribe", { method: "post" });
     const url = res.data.url;
     window.location.replace(url);
   }
 
   useEffect(() => {
-    async function fetchUserInfo() {
-      const token = await getAccessTokenSilently();
-      const path = `https://${import.meta.env.VITE_AUTH0_DOMAIN}/userinfo`;
-      const authorization = `Bearer ${token}`;
-      return await axios.get(path, { headers: { authorization } });
-    }
-
-    async function fetchSubscription() {
-      const token = await getAccessTokenSilently();
-      const path = `${import.meta.env.VITE_API}/stats/get/sub`;
-      const authorization = `Bearer ${token}`;
-      return axios.get(path, { headers: { authorization } });
-    }
-
-    fetchUserInfo().then((res) => setUserInof(res.data));
-
-    fetchSubscription().then((res) => setSub(res.data));
+    const origin = `https://${import.meta.env.VITE_AUTH0_DOMAIN}`;
+    request("/userinfo", { origin }).then((res) => setUserInof(res.data));
+    request("/stats/get/sub").then((res) => setSub(res.data));
   }, []);
 
   function renderUserInfo() {
