@@ -77,8 +77,16 @@ section {
   @apply text-black btn bg-warning hover:bg-warning-dark;
 }
 
+.btn-success {
+  @apply text-white btn bg-success hover:bg-success-dark;
+}
+
 .btn-text {
   @apply flex items-center gap-2 px-3 py-2 text-base font-semibold transition-all hover:bg-black hover:text-white;
+}
+
+.btn-text:disabled {
+  @apply text-gray-400 cursor-not-allowed hover:bg-transparent hover:text-gray-400;
 }
 
 .btn-text-primary {
@@ -91,6 +99,10 @@ section {
 
 .btn-text-warning {
   @apply btn-text text-warning hover:bg-warning;
+}
+
+.btn-text-success {
+  @apply btn-text text-success hover:bg-success;
 }
 /* Tables */
 .table-wrapper {
@@ -162,20 +174,6 @@ td:first-of-type {
 /* Skeleton */
 .skeleton-loader {
   animation: skeletonLoading 1.5s infinite ease-in-out;
-}
-
-.skeleton-circle {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: #e0e0e0; /* Placeholder color */
-}
-
-.skeleton-line {
-  height: 16px;
-  width: 100px; /* Adjust the width as needed */
-  margin-bottom: 8px;
-  background-color: #e0e0e0; /* Placeholder color */
 }
 
 @keyframes skeletonLoading {

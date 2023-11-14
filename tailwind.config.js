@@ -10,6 +10,8 @@ export default {
         "warning-dark": "#eab308",
         danger: "#dc2626",
         "danger-dark": "#991b1b",
+        success: "#14A44D",
+        "success-dark": "#0e7236",
       },
       animation: {
         "fade-in": "fade-in 0.8s forwards ease-in-out",

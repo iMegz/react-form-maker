@@ -2,6 +2,7 @@ import {
   DeleteFilled,
   EditFilled,
   EyeFilled,
+  LinkOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
@@ -77,6 +78,11 @@ const FormsPage = () => {
     );
   }
 
+  function copyLink(id: string) {
+    const path = `${import.meta.env.VITE_ORIGIN}/form/${id}`;
+    return () => navigator.clipboard.writeText(path);
+  }
+
   // Render forms table
   function renderForms() {
     if (!forms) {
@@ -101,45 +107,59 @@ const FormsPage = () => {
       );
     }
 
-    return forms.map(({ id, title, description }) => (
+    return forms.map(({ id, title, description, isPublic }) => (
       <tr key={id}>
         <td className="text-xs md:text-base">
           <Link to={"edit/" + id}>{title}</Link>
         </td>
 
-        <td className="hidden lg:table-cell ">
+        <td className="hidden lg:table-cell">
           <p className="line-clamp-2">{description}</p>
         </td>
 
-        <td className="flex gap-0 md:gap-2">
-          <Link to={"preview/" + id}>
-            <button className="btn-text-primary">
-              <EyeFilled />
-              <span className="hidden md:inline">Preview</span>
-            </button>
-          </Link>
+        <td className="flex flex-col items-center ">
+          <div className="flex gap-1">
+            <Link to={"preview/" + id}>
+              <button className="btn-text-primary">
+                <EyeFilled />
+                <span className="hidden md:inline">Preview</span>
+              </button>
+            </Link>
 
-          <Link to={"responses/" + id}>
-            <button className="btn-text">
-              <UnorderedListOutlined />
-              <span className="hidden md:inline">Responses</span>
-            </button>
-          </Link>
+            <Link to={"edit/" + id}>
+              <button className="btn-text-warning">
+                <EditFilled />
+                <span className="hidden md:inline">Edit</span>
+              </button>
+            </Link>
 
-          <Link to={"edit/" + id}>
-            <button className="btn-text-warning">
-              <EditFilled />
-              <span className="hidden md:inline">Edit</span>
+            <button
+              className="btn-text-danger"
+              onClick={() => setModal(<DeleteModal id={id} title={title} />)}
+            >
+              <DeleteFilled />
+              <span className="hidden md:inline">Delete</span>
             </button>
-          </Link>
+          </div>
 
-          <button
-            className="btn-text-danger"
-            onClick={() => setModal(<DeleteModal id={id} title={title} />)}
-          >
-            <DeleteFilled />
-            <span className="hidden md:inline">Delete</span>
-          </button>
+          <div className="flex gap-2">
+            <Link to={"responses/" + id}>
+              <button className="btn-text-success">
+                <UnorderedListOutlined />
+                <span className="hidden md:inline">View responses</span>
+              </button>
+            </Link>
+
+            <button
+              className="btn-text"
+              onClick={copyLink(id)}
+              disabled={!isPublic}
+              title={!isPublic ? "Form is not public" : ""}
+            >
+              <LinkOutlined />
+              <span className="hidden md:inline">Copy Link</span>
+            </button>
+          </div>
         </td>
       </tr>
     ));
@@ -161,7 +181,9 @@ const FormsPage = () => {
               <th scope="col" className="hidden lg:table-cell">
                 Description
               </th>
-              <th scope="col">Actions</th>
+              <th scope="col" className="text-center">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>{renderForms()}</tbody>
