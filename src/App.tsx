@@ -19,7 +19,7 @@ function App() {
   const { isLoading } = useAuth0();
 
   function renderRoutes() {
-    if (isLoading) return <Route path="*" element={<LoadingPage />} />;
+    if (isLoading) return <Route path="*" element={<LoadingPage screen />} />;
     return (
       <>
         <Route path="/" element={<HomePage />} />

@@ -16,7 +16,7 @@ const InfoCard = ({ color, Icon, title, value }: InfoCardProps) => {
       <h2 className="text-gray-600">{title}</h2>
       <div className="flex items-center justify-between">
         <span className="text-2xl">
-          {value || <Spinner style={{ fill: color }} />}
+          {value ?? <Spinner style={{ fill: color }} />}
         </span>
         <Icon style={{ color }} />
       </div>
