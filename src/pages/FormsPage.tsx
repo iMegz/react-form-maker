@@ -165,13 +165,21 @@ const FormsPage = () => {
     ));
   }
 
+  function renderCreateNewForm() {
+    // Allow free sub users to have limited number of forms
+    if (!forms || forms.length > 2) return null;
+    return (
+      <Link to="edit">
+        <button className="btn-primary">Create new form</button>
+      </Link>
+    );
+  }
+
   return (
     <div>
       <h1>Forms</h1>
 
-      <Link to="edit">
-        <button className="btn-primary">Create new form</button>
-      </Link>
+      {renderCreateNewForm()}
 
       <div className="mt-6 table-wrapper">
         <table className="overflow-x-auto">
