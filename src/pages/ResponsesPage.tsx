@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import LoadingPage from "./LoadingPage";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
+import NotFound from "./NotFound";
+import { DeleteFilled } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const ResponsesPage = () => {
   const { id } = useParams();
-  const [responses, setResponses] = useState<FormResponses | null>(null);
+  const [responses, setResponses] = useState<FormResponses | null | undefined>(
+    null
+  );
   const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
@@ -15,16 +20,90 @@ const ResponsesPage = () => {
       const token = await getAccessTokenSilently();
       const authorization = `Bearer ${token}`;
       const res = await axios.get(path, { headers: { authorization } });
+
       return res;
     }
 
     fetchData()
       .then((res) => setResponses(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response.status === 404) setResponses(undefined);
+      });
   }, []);
 
-  if (!responses) return <LoadingPage />;
-  console.log(responses);
+  function ResponseQuestion({ question }: { question: ResponseQuestion }) {
+    const value = question.value || "(Not answerd)";
+    const cn = question.value ? "text-gray-600" : "text-danger";
+    return (
+      <div>
+        <h3 className="font-semibold">{question.title}</h3>
+        <p className={cn}>{value}</p>
+      </div>
+    );
+  }
+
+  function ResponseSection({ section }: { section: ResponseSection }) {
+    return (
+      <div className="flex flex-col gap-3">
+        <h2 className="text-xl font-bold text-primary">{section.title}</h2>
+        {section.questions.map((question) => (
+          <ResponseQuestion question={question} key={question.id} />
+        ))}
+      </div>
+    );
+  }
+
+  function FormResponse({ response }: { response: FormResponse }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const height = ref.current?.scrollHeight;
+    const BOX_HEIGHT = 320;
+
+    const trimmed = (height || Infinity) > BOX_HEIGHT ? " trimmed-section" : "";
+
+    async function onDelete() {
+      setResponses((old) => {
+        const responses = old!.responses.filter(({ id }) => id !== response.id);
+        return { ...old!, responses };
+      });
+
+      const path = `${import.meta.env.VITE_API}/response/del/${response.id}`;
+      const token = await getAccessTokenSilently();
+      const authorization = `Bearer ${token}`;
+      const res = await axios.delete(path, { headers: { authorization } });
+      return res;
+    }
+
+    return (
+      <div>
+        <div
+          ref={ref}
+          className={`flex relative flex-col gap-4 p-6 bg-white shadow-md w-72${trimmed}`}
+        >
+          <button
+            onClick={onDelete}
+            className="absolute m-auto btn-text-danger top-1 right-1"
+          >
+            <DeleteFilled />
+          </button>
+          {response.sections.map((section) => (
+            <ResponseSection key={section.id} section={section} />
+          ))}
+        </div>
+        <Link to={`../response/${response.id}`} state={response}>
+          <button className="m-auto btn-text">View</button>
+        </Link>
+      </div>
+    );
+  }
+
+  function FormResponses({ responses }: { responses: FormResponse[] }) {
+    return responses.map((response) => (
+      <FormResponse key={response.id} response={response} />
+    ));
+  }
+
+  if (responses === null) return <LoadingPage />;
+  if (responses === undefined) return <NotFound />;
 
   function renderResponses() {
     const data = responses!.responses;
@@ -39,65 +118,7 @@ const ResponsesPage = () => {
 
     return (
       <div className="flex flex-wrap gap-6">
-        {data.map((response) => {
-          return (
-            <div
-              key={response.id}
-              className="flex flex-col w-64 gap-4 p-6 bg-white shadow-md"
-            >
-              {response.sections.map((section) => {
-                return (
-                  <div key={section.id} className="flex flex-col gap-3">
-                    <h2 className="text-xl font-bold text-primary">
-                      {section.title}
-                    </h2>
-                    {section.questions.map((question) => {
-                      if (
-                        question.type === "DROPDOWN" ||
-                        question.type === "MCQ"
-                      ) {
-                        // console.log({ ...question });
-                      }
-
-                      let value: string;
-
-                      const type = typeof question.value!;
-                      if (type === "string" || type === "number") {
-                        value = String(question.value);
-                      } else {
-                        const cv = question.value! as CheckedValue;
-                        const other = cv.checked.other && cv.other;
-                        value = other ? cv.other + ", " : "";
-                        console.log(value);
-
-                        value = Object.keys(cv.checked).reduce((prev, curr) => {
-                          if (curr === "other") return prev;
-                          console.log(curr, cv.checked[curr]);
-
-                          return prev + (cv.checked[curr] ? `${curr}, ` : "");
-                        }, value);
-                        console.log(value);
-
-                        value = value.slice(0, value.length - 2);
-                      }
-
-                      return (
-                        <div key={question.id}>
-                          <h3 className="font-semibold">{question.title}</h3>
-                          {value ? (
-                            <p>{value}</p>
-                          ) : (
-                            <p className="text-danger">(Not answerd)</p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })}
+        <FormResponses responses={data} />
       </div>
     );
   }

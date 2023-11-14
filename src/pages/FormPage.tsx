@@ -33,12 +33,12 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
   async function onSave(values: FormResponse) {
     if (preview) navigate("/response/sent");
     else {
-      // const data = { form: id, sections: values.sections };
-      // const path = `${import.meta.env.VITE_API}/response/new`;
-      // const token = await getAccessTokenSilently();
-      // const authorization = `Bearer ${token}`;
-      // await axios.post(path, data, { headers: { authorization } });
-      // navigate("/response/sent");
+      const data = { form: id, sections: values.sections };
+      const path = `${import.meta.env.VITE_API}/response/new`;
+      const token = await getAccessTokenSilently();
+      const authorization = `Bearer ${token}`;
+      await axios.post(path, data, { headers: { authorization } });
+      navigate("/response/sent");
     }
   }
 

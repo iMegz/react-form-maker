@@ -42,6 +42,19 @@ section {
 .container hr {
   @apply w-32 mb-6 border border-primary-dark;
 }
+.trimmed-section {
+  @apply overflow-hidden max-h-80;
+}
+
+.trimmed-section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(to top, #c0c0c07d, #ffffff55);
+  height: 5rem;
+  width: 100%;
+}
 
 /* Buttons */
 .btn {
