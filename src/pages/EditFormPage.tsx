@@ -24,13 +24,13 @@ const EditFormPage = () => {
   const request = useRequest();
   const queryClient = useQueryClient();
   const formQuery = useQuery({
-    queryFn: request<Form>(`/forms/get/${id}`),
+    queryFn: request<Form>(`/forms/${id}`),
     queryKey: ["forms", id],
   });
 
   const saveFormMutation = useMutation({
     mutationFn: async (body: NewForm) => {
-      return request<Form>(`/forms/edit/${id}`, { body, method: "patch" })();
+      return request<Form>(`/forms/${id}`, { body, method: "patch" })();
     },
     onError: () => {
       alert("Failed to save form");
@@ -41,7 +41,8 @@ const EditFormPage = () => {
     },
   });
 
-  if (formQuery.isLoading) {
+  if (formQuery.isError) return <NotFound />;
+  if (formQuery.isLoading || !formQuery.data?.data) {
     return (
       <div className="grid w-full h-full place-items-center">
         <div className="flex flex-col items-center">
@@ -52,13 +53,11 @@ const EditFormPage = () => {
     );
   }
 
-  if (formQuery.isError) return <NotFound />;
-
   const handleSaveForm = async (form: NewForm) => {
     saveFormMutation.mutate(form);
   };
 
-  const form = formQuery.data!.data;
+  const form = formQuery.data.data;
 
   return (
     <FormProvider form={form}>

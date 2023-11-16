@@ -33,7 +33,7 @@ const NewFormPage = () => {
 
   const saveFormMutation = useMutation({
     mutationFn: async (body: NewForm) => {
-      return request<Form>(`/forms/new`, { body, method: "post" })();
+      return request<Form>(`/forms`, { body, method: "post" })();
     },
     onError: () => {
       alert("Failed to save form");

@@ -18,7 +18,7 @@ const ResponsePage = () => {
 
   if (!state) {
     var responseQuery = useQuery({
-      queryFn: request<FormResponse>(`/response/get/${id}`),
+      queryFn: request<FormResponse>(`/response/${id}`),
       queryKey: ["responses", id],
     });
   }

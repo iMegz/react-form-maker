@@ -13,14 +13,14 @@ const ResponsesPage = () => {
   const queryClient = useQueryClient();
 
   const responsesQuery = useQuery({
-    queryFn: request<FormResponses>(`/response/get/all/${id}`),
+    queryFn: request<FormResponses>(`/response/form/${id}`),
     queryKey: ["responses", "form", id],
     staleTime: 30_000, // 30 seconds
   });
 
   const deleteResponseMutation = useMutation({
     mutationFn: (id: string) =>
-      request(`/response/del/${id}`, { method: "delete" })(),
+      request(`/response/${id}`, { method: "delete" })(),
     onSuccess: () => {
       queryClient.invalidateQueries(["responses", "form", id]);
       queryClient.invalidateQueries(["forms", "responses"], { exact: true });

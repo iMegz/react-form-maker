@@ -19,7 +19,7 @@ const ProfilePage = () => {
   const queryClient = useQueryClient();
 
   const subscriptionQuery = useQuery({
-    queryFn: request<Subscription>("/stats/get/sub"),
+    queryFn: request<Subscription>("/stats/sub"),
     queryKey: ["subscription"],
   });
 

@@ -12,13 +12,13 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
 
   const isAuth = preview ? "" : "/unauth";
   const formQuery = useQuery({
-    queryFn: request<Form>(`/forms${isAuth}/get/${id}`, { auth: preview }),
+    queryFn: request<Form>(`/forms${isAuth}/${id}`, { auth: preview }),
     queryKey: ["form", id],
   });
 
   const saveResponseMutation = useMutation({
     mutationFn: async (body: FormResponse) => {
-      return request("/response/new", { method: "post", body })();
+      return request("/response", { method: "post", body })();
     },
     onSuccess: () => {
       navigate("/response/sent");

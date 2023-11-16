@@ -16,13 +16,13 @@ const DashboardPage = () => {
   const request = useRequest();
 
   const formsStatsQuery = useQuery({
-    queryFn: request<FormStats>("/stats/get/forms"),
+    queryFn: request<FormStats>("/stats/forms"),
     queryKey: ["forms", "responses"],
     staleTime: 30_000, // 30 seconds
   });
 
   const subscriptionQuery = useQuery({
-    queryFn: request<Subscription>("/stats/get/sub"),
+    queryFn: request<Subscription>("/stats/sub"),
     queryKey: ["subscription"],
   });
 

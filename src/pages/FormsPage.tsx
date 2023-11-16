@@ -19,13 +19,13 @@ const FormsPage = () => {
   const queryClient = useQueryClient();
 
   const formsQuery = useQuery({
-    queryFn: request<Form[]>("/forms/get/all"),
+    queryFn: request<Form[]>("/forms"),
     queryKey: ["forms"],
   });
 
   const deleteFormMutation = useMutation({
     mutationFn: (id: string) => {
-      return request(`/forms/del/${id}`, { method: "delete" })();
+      return request(`/forms/${id}`, { method: "delete" })();
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["forms"]);
