@@ -83,7 +83,21 @@ interface FormResponses {
   responses: FormResponse[];
 }
 
-// interface CheckedValue {
-//   checked: { [key: string]: boolean };
-//   other: string;
-// }
+interface UserInfo {
+  given_name: string;
+  family_name: string;
+  picture: string;
+  email: string;
+  [key: string]: string | boolean;
+}
+
+interface FreeSubscription {
+  subscription: "Free";
+}
+interface PremiumSubscription {
+  subscription: "Premium";
+  start: string;
+  end: string;
+}
+
+type Subscription = FreeSubscription | PremiumSubscription;

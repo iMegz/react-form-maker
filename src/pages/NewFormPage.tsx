@@ -1,9 +1,8 @@
-import { useNavigate, useParams } from "react-router-dom";
-import Spinner from "../components/Spinner";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FormProvider, { Edit } from "../components/Form/Form";
 import useRequest from "../hooks/useRequest";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import NotFound from "./NotFound";
+import { useMutation, useQueryClient } from "react-query";
 
 type Section = {
   id: string;
@@ -18,47 +17,37 @@ interface NewForm {
   sections: Section[];
 }
 
-const EditFormPage = () => {
-  const { id } = useParams();
+const formInit: NewForm = {
+  title: "My form",
+  description: "",
+  isPublic: false,
+  sections: [],
+};
+
+const NewFormPage = () => {
+  const [form] = useState<NewForm>(formInit);
+
   const navigate = useNavigate();
   const request = useRequest();
   const queryClient = useQueryClient();
-  const formQuery = useQuery({
-    queryFn: request<Form>(`/forms/get/${id}`),
-    queryKey: ["forms", id],
-  });
 
   const saveFormMutation = useMutation({
     mutationFn: async (body: NewForm) => {
-      return request<Form>(`/forms/edit/${id}`, { body, method: "patch" })();
+      return request<Form>(`/forms/new`, { body, method: "post" })();
     },
     onError: () => {
       alert("Failed to save form");
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      queryClient.setQueryData(["forms", data.data.id], data.data);
       queryClient.invalidateQueries(["forms"]);
       navigate("/dashboard/forms");
     },
   });
 
-  if (formQuery.isLoading) {
-    return (
-      <div className="grid w-full h-full place-items-center">
-        <div className="flex flex-col items-center">
-          <h1>Loading Form</h1>
-          <Spinner />
-        </div>
-      </div>
-    );
-  }
-
-  if (formQuery.isError) return <NotFound />;
-
   const handleSaveForm = async (form: NewForm) => {
     saveFormMutation.mutate(form);
   };
-
-  const form = formQuery.data!.data;
 
   return (
     <FormProvider form={form}>
@@ -71,4 +60,4 @@ const EditFormPage = () => {
   );
 };
 
-export default EditFormPage;
+export default NewFormPage;

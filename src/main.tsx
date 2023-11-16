@@ -3,8 +3,13 @@ import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { Auth0Provider } from "@auth0/auth0-react";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 const redirect_uri = `${import.meta.env.VITE_ORIGIN}/dashboard/`;
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: Infinity } },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Auth0Provider
@@ -13,7 +18,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     authorizationParams={{ redirect_uri }}
   >
     <BrowserRouter>
-      <App />
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
     </BrowserRouter>
   </Auth0Provider>
 );

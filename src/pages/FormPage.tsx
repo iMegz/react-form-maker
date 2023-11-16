@@ -1,38 +1,44 @@
-import { useEffect, useState } from "react";
 import LoadingPage from "./LoadingPage";
 import { useNavigate, useParams } from "react-router-dom";
 import NotFound from "./NotFound";
 import Form, { Submission } from "../components/Form/Form";
 import useRequest from "../hooks/useRequest";
+import { useMutation, useQuery } from "react-query";
 
 const FormPage = ({ preview }: { preview?: boolean }) => {
-  const [form, setForm] = useState<Form | null | undefined>(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const request = useRequest();
 
-  useEffect(() => {
-    const isAuth = preview ? "" : "/unauth";
-    request(`/forms${isAuth}/get/${id}`, { auth: preview })
-      .then((res) => setForm(res.data))
-      .catch(() => setForm(undefined));
-  }, []);
+  const isAuth = preview ? "" : "/unauth";
+  const formQuery = useQuery({
+    queryFn: request<Form>(`/forms${isAuth}/get/${id}`, { auth: preview }),
+    queryKey: ["form", id],
+  });
+
+  const saveResponseMutation = useMutation({
+    mutationFn: async (body: FormResponse) => {
+      return request("/response/new", { method: "post", body })();
+    },
+    onSuccess: () => {
+      navigate("/response/sent");
+    },
+  });
 
   async function onSave(values: FormResponse) {
     if (preview) navigate("/response/sent");
     else {
-      const data = { form: id, sections: values.sections };
-      await request("/response/new", { method: "post", body: data });
-      navigate("/response/sent");
+      const data: FormResponse = { form: id!, sections: values.sections };
+      saveResponseMutation.mutate(data);
     }
   }
 
-  if (form === undefined) return <NotFound />;
-  if (form === null) return <LoadingPage screen />;
+  if (formQuery.isError) return <NotFound />;
+  if (formQuery.isLoading) return <LoadingPage screen />;
 
   return (
     <div className={!preview ? "min-h-screen py-8 m-auto " : ""}>
-      <Form form={form}>
+      <Form form={formQuery.data?.data!}>
         <Submission.FormInfo />
         <Submission.Questions onSubmit={onSave} />
       </Form>

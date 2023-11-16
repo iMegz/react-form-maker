@@ -6,33 +6,36 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import Modal from "../components/Modal";
 import { createPortal } from "react-dom";
 import Spinner from "../components/Spinner";
 import useRequest from "../hooks/useRequest";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const FormsPage = () => {
   const [modal, setModal] = useState<ReactNode | null>(null);
-  const [forms, setForms] = useState<Form[] | null>(null);
   const request = useRequest();
+  const queryClient = useQueryClient();
 
-  // Get forms from backend
-  useEffect(() => {
-    request("/forms/get/all")
-      .then((res) => setForms(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  const formsQuery = useQuery({
+    queryFn: request<Form[]>("/forms/get/all"),
+    queryKey: ["forms"],
+  });
+
+  const deleteFormMutation = useMutation({
+    mutationFn: (id: string) => {
+      return request(`/forms/del/${id}`, { method: "delete" })();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["forms"]);
+    },
+  });
 
   // Delete form
   async function deleteForm(id: string, cb: Function) {
-    // Delete it from frontend
-    const index = forms!.findIndex((v) => v.id == id);
-    forms!.splice(index, 1);
     setModal(null);
-
-    // Delete it from backend
-    await request(`/forms/del/${id}`, { method: "delete" });
+    deleteFormMutation.mutate(id);
     cb();
   }
 
@@ -72,7 +75,7 @@ const FormsPage = () => {
 
   // Render forms table
   function renderForms() {
-    if (!forms) {
+    if (formsQuery.isLoading) {
       return (
         <tr>
           <td colSpan={3}>
@@ -81,6 +84,19 @@ const FormsPage = () => {
         </tr>
       );
     }
+
+    if (formsQuery.isError)
+      return (
+        <tr>
+          <td colSpan={3}>
+            <div className="flex justify-center text-danger">
+              Failed to retrieve forms
+            </div>
+          </td>
+        </tr>
+      );
+
+    const forms = formsQuery.data?.data!;
 
     if (!forms.length) {
       return (
@@ -154,9 +170,8 @@ const FormsPage = () => {
 
   function renderCreateNewForm() {
     // Allow free sub users to have limited number of forms
-    if (!forms || forms.length > 2) return null;
     return (
-      <Link to="edit">
+      <Link to="new">
         <button className="btn-primary">Create new form</button>
       </Link>
     );

@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 type Method = "get" | "delete" | "head" | "post" | "patch" | "put";
 
@@ -11,34 +11,43 @@ interface Options {
 }
 
 interface RequestFn {
-  (endpoint: string, options?: Options): Promise<AxiosResponse<any, any>>;
+  <T = any>(endpoint: string, options?: Options): () => Promise<
+    AxiosResponse<T>
+  >;
 }
 
-export default function () {
-  const { getAccessTokenSilently } = useAuth0();
-  const methodsWithBody: Method[] = ["put", "patch", "post"];
+const METHODS_WITH_BODY: Method[] = ["put", "patch", "post"];
+const ORIGIN = import.meta.env.VITE_API;
 
-  const request: RequestFn = async (endpoint, options = {}) => {
-    const args = [];
+const useRequest = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const request: RequestFn = <T = any>(
+    endpoint: string,
+    options: Options = {}
+  ) => {
     const {
       method = "get",
       auth = true,
       body = null,
-      origin = import.meta.env.VITE_API,
+      origin = ORIGIN,
     } = options;
+    const args: [AxiosRequestConfig<any>?] = [];
 
-    const path = origin + endpoint;
+    return async () => {
+      const path = origin + endpoint;
+      if (METHODS_WITH_BODY.includes(method)) args.push(body);
+      if (auth) {
+        const token = await getAccessTokenSilently();
+        const authorization = `Bearer ${token}`;
+        args.push({ headers: { authorization } });
+      }
 
-    if (methodsWithBody.includes(method)) args.push(body);
-
-    if (auth) {
-      const token = await getAccessTokenSilently();
-      const authorization = `Bearer ${token}`;
-      args.push({ headers: { authorization } });
-    }
-
-    return axios[method](path, ...args);
+      return axios[method]<T>(path, ...args);
+    };
   };
 
   return request;
-}
+};
+
+export default useRequest;

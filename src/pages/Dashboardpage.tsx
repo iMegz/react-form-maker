@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   CreditCardOutlined,
   FormOutlined,
@@ -6,26 +5,29 @@ import {
 } from "@ant-design/icons";
 import InfoCard from "../components/InfoCard";
 import useRequest from "../hooks/useRequest";
+import { useQuery } from "react-query";
 
 interface FormStats {
   forms: number;
   responses: number;
 }
 
-const Dashboardpage = () => {
-  const [stats, setStats] = useState<FormStats>();
-  const [subscription, setSubscription] = useState<string>();
+const DashboardPage = () => {
   const request = useRequest();
 
-  useEffect(() => {
-    request("/stats/get/forms").then((res) => {
-      setStats(res.data);
-    });
+  const formsStatsQuery = useQuery({
+    queryFn: request<FormStats>("/stats/get/forms"),
+    queryKey: ["forms", "responses"],
+    staleTime: 30_000, // 30 seconds
+  });
 
-    request("/stats/get/sub").then((res) =>
-      setSubscription(res.data.subscription)
-    );
-  }, []);
+  const subscriptionQuery = useQuery({
+    queryFn: request<Subscription>("/stats/get/sub"),
+    queryKey: ["subscription"],
+  });
+
+  const stats = formsStatsQuery.data?.data;
+  const subscription = subscriptionQuery.data?.data.subscription;
 
   return (
     <div>
@@ -55,4 +57,4 @@ const Dashboardpage = () => {
   );
 };
 
-export default Dashboardpage;
+export default DashboardPage;

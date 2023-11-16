@@ -14,6 +14,7 @@ import ResponseSentPage from "./pages/ResponseSentPage";
 import ResponsesPage from "./pages/ResponsesPage";
 import ResponsePage from "./pages/ResponsePage";
 import PaymentSucessPage from "./pages/PaymentSucessPage";
+import NewFormPage from "./pages/NewFormPage";
 
 function App() {
   const { isLoading } = useAuth0();
@@ -27,7 +28,8 @@ function App() {
           <Route index element={<DashboardPage />} />
           <Route path="forms">
             <Route index element={<FormsPage />} />
-            <Route path="edit/:id?" element={<EditFormPage />} />
+            <Route path="new" element={<NewFormPage />} />
+            <Route path="edit/:id" element={<EditFormPage />} />
             <Route path="preview/:id?" element={<FormPage preview />} />
             <Route path="responses/:id" element={<ResponsesPage />} />
             <Route path="response/:id" element={<ResponsePage />} />

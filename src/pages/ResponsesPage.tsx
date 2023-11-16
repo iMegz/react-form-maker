@@ -1,24 +1,31 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useParams } from "react-router-dom";
 import LoadingPage from "./LoadingPage";
 import NotFound from "./NotFound";
 import { DeleteFilled } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import useRequest from "../hooks/useRequest";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
-type ResponsesState = FormResponses | null | undefined;
 const ResponsesPage = () => {
   const { id } = useParams();
-  const [responses, setResponses] = useState<ResponsesState>(null);
   const request = useRequest();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    request(`/response/get/all/${id}`)
-      .then((res) => setResponses(res.data))
-      .catch((err) => {
-        if (err.response.status === 404) setResponses(undefined);
-      });
-  }, []);
+  const responsesQuery = useQuery({
+    queryFn: request<FormResponses>(`/response/get/all/${id}`),
+    queryKey: ["responses", "form", id],
+    staleTime: 30_000, // 30 seconds
+  });
+
+  const deleteResponseMutation = useMutation({
+    mutationFn: (id: string) =>
+      request(`/response/del/${id}`, { method: "delete" })(),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["responses", "form", id]);
+      queryClient.invalidateQueries(["forms", "responses"], { exact: true });
+    },
+  });
 
   function ResponseQuestion({ question }: { question: ResponseQuestion }) {
     const value = question.value || "(Not answerd)";
@@ -50,12 +57,7 @@ const ResponsesPage = () => {
     const trimmed = (height || Infinity) > BOX_HEIGHT ? " trimmed-section" : "";
 
     function onDelete() {
-      setResponses((old) => {
-        const responses = old!.responses.filter(({ id }) => id !== response.id);
-        return { ...old!, responses };
-      });
-
-      request(`/response/del/${response.id}`, { method: "delete" });
+      deleteResponseMutation.mutate(response.id!);
     }
 
     return (
@@ -87,11 +89,12 @@ const ResponsesPage = () => {
     ));
   }
 
-  if (responses === null) return <LoadingPage />;
-  if (responses === undefined) return <NotFound />;
+  if (responsesQuery.isLoading) return <LoadingPage />;
+  if (responsesQuery.isError) return <NotFound />;
+  const responses = responsesQuery.data!.data!;
 
   function renderResponses() {
-    const data = responses!.responses;
+    const data = responses.responses;
 
     if (!data.length) {
       return (

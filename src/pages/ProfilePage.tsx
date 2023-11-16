@@ -1,25 +1,6 @@
-import { useEffect, useState } from "react";
 import Spinner from "../components/Spinner";
 import useRequest from "../hooks/useRequest";
-
-interface UserInfo {
-  given_name: string;
-  family_name: string;
-  picture: string;
-  email: string;
-  [key: string]: string | boolean;
-}
-
-interface FreeSubscription {
-  subscription: "Free";
-}
-interface PremiumSubscription {
-  subscription: "Premium";
-  start: string;
-  end: string;
-}
-
-type Subscription = FreeSubscription | PremiumSubscription;
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 function SkeletonProfile() {
   return (
@@ -34,24 +15,38 @@ function SkeletonProfile() {
 }
 
 const ProfilePage = () => {
-  const [sub, setSub] = useState<Subscription>();
-  const [userInfo, setUserInof] = useState<UserInfo>();
   const request = useRequest();
+  const queryClient = useQueryClient();
+
+  const subscriptionQuery = useQuery({
+    queryFn: request<Subscription>("/stats/get/sub"),
+    queryKey: ["subscription"],
+  });
+
+  const origin = `https://${import.meta.env.VITE_AUTH0_DOMAIN}`;
+  const userInfoQuery = useQuery({
+    queryFn: request<UserInfo>("/userinfo", { origin }),
+    queryKey: ["userinfo"],
+  });
+
+  const subscriptionMutation = useMutation({
+    mutationFn: request<{ url: string }>("/subscription/subscribe", {
+      method: "post",
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["subscription"]);
+    },
+  });
 
   async function onClick() {
-    const res = await request("/subscription/subscribe", { method: "post" });
-    const url = res.data.url;
-    window.location.replace(url);
+    subscriptionMutation.mutate();
+    const url = subscriptionMutation.data?.data.url;
+    if (url) window.location.replace(url);
   }
 
-  useEffect(() => {
-    const origin = `https://${import.meta.env.VITE_AUTH0_DOMAIN}`;
-    request("/userinfo", { origin }).then((res) => setUserInof(res.data));
-    request("/stats/get/sub").then((res) => setSub(res.data));
-  }, []);
-
   function renderUserInfo() {
-    if (!userInfo) return <SkeletonProfile />;
+    if (!userInfoQuery.isSuccess) return <SkeletonProfile />;
+    const userInfo = userInfoQuery.data.data;
     const { email, family_name, given_name, picture } = userInfo;
 
     const fullName = `${given_name} ${family_name}`;
@@ -71,7 +66,8 @@ const ProfilePage = () => {
   }
 
   function renderSub() {
-    if (!sub) return <Spinner />;
+    if (!subscriptionQuery.isSuccess) return <Spinner />;
+    const sub = subscriptionQuery.data.data;
     if (sub.subscription === "Free")
       return (
         <button className="btn-primary" onClick={onClick}>

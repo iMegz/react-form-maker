@@ -1,32 +1,36 @@
 import { useLocation, useParams } from "react-router-dom";
 import LoadingPage from "./LoadingPage";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import NotFound from "./NotFound";
 import useRequest from "../hooks/useRequest";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useQuery } from "react-query";
 
 function objectIdToDate(id: string) {
   return new Date(parseInt(id.substring(0, 8), 16) * 1000).toLocaleString();
 }
 
-type ResponseState = FormResponse | null | undefined;
-
 const ResponsePage = () => {
   const { state } = useLocation();
-  const [response, setResponse] = useState<ResponseState>(state);
   const { id } = useParams();
   const request = useRequest();
 
-  useEffect(() => {
-    if (response !== null) return;
-    request(`/response/get/${id}`)
-      .then((res) => setResponse(res.data))
-      .catch(() => setResponse(undefined));
-  }, []);
+  if (!state) {
+    var responseQuery = useQuery({
+      queryFn: request<FormResponse>(`/response/get/${id}`),
+      queryKey: ["responses", id],
+    });
+  }
 
-  if (response === null) return <LoadingPage />;
-  if (response === undefined) return <NotFound />;
+  if (!state) {
+    if (responseQuery!.isLoading) return <LoadingPage />;
+    if (responseQuery!.isError) return <NotFound />;
+  }
+
+  let response: FormResponse;
+  if (state) response = state;
+  else response = responseQuery!.data?.data!;
 
   return (
     <div>
