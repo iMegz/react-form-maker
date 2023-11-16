@@ -1,3 +1,5 @@
+import { useQuery } from "react-query";
+import useRequest from "../../hooks/useRequest";
 import { useFormContext } from "./Form";
 import Question, { Edit } from "./Question";
 
@@ -8,6 +10,12 @@ interface QuestionEditProps {
 
 const QuestionEdit = ({ question: q, sectionId }: QuestionEditProps) => {
   const { get, set } = useFormContext();
+  const request = useRequest();
+  const subscriptionQuery = useQuery({
+    queryFn: request<Subscription>("/stats/sub"),
+    queryKey: ["subscription"],
+  });
+
   const canDelete = get.ids[sectionId].length > 1;
 
   function onDelete() {
@@ -38,9 +46,11 @@ const QuestionEdit = ({ question: q, sectionId }: QuestionEditProps) => {
     });
   }
 
+  const sub = subscriptionQuery.data?.data.subscription;
+  const MAX_CHOICES = sub === "Premium" ? Infinity : undefined;
   return (
     <div className="pb-3 border-b border-b-gray-300 animate-fade-in">
-      <Question question={q}>
+      <Question question={q} MAX_CHOICES={MAX_CHOICES}>
         <Edit.Wrapper>
           <Edit.Error />
           <Edit.Type />

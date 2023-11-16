@@ -4,6 +4,9 @@ import NotFound from "./NotFound";
 import Form, { Submission } from "../components/Form/Form";
 import useRequest from "../hooks/useRequest";
 import { useMutation, useQuery } from "react-query";
+import MaxResponsesPage from "./MaxResponsesPage";
+
+const MAX_FREE_RESPONSES = 50;
 
 const FormPage = ({ preview }: { preview?: boolean }) => {
   const { id } = useParams();
@@ -15,6 +18,23 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
     queryFn: request<Form>(`/forms${isAuth}/${id}`, { auth: preview }),
     queryKey: ["form", id],
   });
+
+  const subscriptionQuery = useQuery({
+    queryFn: request<Subscription>(`/stats/sub/${id}`, { auth: false }),
+    queryKey: ["subscription"],
+    enabled: formQuery.isSuccess,
+  });
+
+  const responsesCountQuery = useQuery({
+    queryFn: request<{ responses: number }>(`/response/count/${id}`, {
+      auth: false,
+    }),
+    queryKey: ["responses", id],
+    enabled: formQuery.isSuccess,
+  });
+
+  const sub = subscriptionQuery.data?.data.subscription;
+  const responses = responsesCountQuery.data?.data.responses;
 
   const saveResponseMutation = useMutation({
     mutationFn: async (body: FormResponse) => {
@@ -34,7 +54,13 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
   }
 
   if (formQuery.isError) return <NotFound />;
-  if (formQuery.isLoading) return <LoadingPage screen />;
+  if (formQuery.isLoading || !sub || responses === undefined) {
+    return <LoadingPage screen />;
+  }
+
+  if (sub === "Free" && responses >= MAX_FREE_RESPONSES) {
+    return <MaxResponsesPage />;
+  }
 
   return (
     <div className={!preview ? "min-h-screen py-8 m-auto " : ""}>

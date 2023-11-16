@@ -493,7 +493,7 @@ export const Submission = {
   FormInfo: SubmissionFormInfo,
 };
 
-function newQuestion(): Question {
+export function newQuestion(): Question {
   return {
     id: `NEW_${Date.now()}`,
     question: "",

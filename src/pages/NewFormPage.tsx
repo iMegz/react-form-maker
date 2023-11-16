@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FormProvider, { Edit } from "../components/Form/Form";
+import FormProvider, { Edit, newQuestion } from "../components/Form/Form";
 import useRequest from "../hooks/useRequest";
 import { useMutation, useQueryClient } from "react-query";
+import { v4 as uuidv4 } from "uuid";
 
 type Section = {
   id: string;
@@ -21,7 +22,7 @@ const formInit: NewForm = {
   title: "My form",
   description: "",
   isPublic: false,
-  sections: [],
+  sections: [{ id: uuidv4(), questions: [newQuestion()], title: "" }],
 };
 
 const NewFormPage = () => {

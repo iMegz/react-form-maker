@@ -7,11 +7,6 @@ import InfoCard from "../components/InfoCard";
 import useRequest from "../hooks/useRequest";
 import { useQuery } from "react-query";
 
-interface FormStats {
-  forms: number;
-  responses: number;
-}
-
 const DashboardPage = () => {
   const request = useRequest();
 

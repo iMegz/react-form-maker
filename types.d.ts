@@ -53,6 +53,7 @@ interface NewForm extends FormInfo {
 
 interface Form extends NewForm {
   id: string;
+  by?: string;
 }
 
 // --------------------------------
@@ -101,3 +102,8 @@ interface PremiumSubscription {
 }
 
 type Subscription = FreeSubscription | PremiumSubscription;
+
+interface FormStats {
+  forms: number;
+  responses: number;
+}

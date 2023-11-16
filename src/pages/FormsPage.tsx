@@ -13,10 +13,23 @@ import Spinner from "../components/Spinner";
 import useRequest from "../hooks/useRequest";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+const MAX_FREE_FORMS = 5;
+
 const FormsPage = () => {
   const [modal, setModal] = useState<ReactNode | null>(null);
   const request = useRequest();
   const queryClient = useQueryClient();
+
+  const formsStatsQuery = useQuery({
+    queryFn: request<FormStats>("/stats/forms"),
+    queryKey: ["forms", "responses"],
+    staleTime: 30_000, // 30 seconds
+  });
+
+  const subscriptionQuery = useQuery({
+    queryFn: request<Subscription>("/stats/sub"),
+    queryKey: ["subscription"],
+  });
 
   const formsQuery = useQuery({
     queryFn: request<Form[]>("/forms"),
@@ -169,7 +182,10 @@ const FormsPage = () => {
   }
 
   function renderCreateNewForm() {
-    // Allow free sub users to have limited number of forms
+    if (!(subscriptionQuery.data && formsStatsQuery.data)) return <Spinner />;
+    const sub = subscriptionQuery.data.data.subscription;
+    const forms = formsStatsQuery.data.data.forms;
+    if (sub === "Free" && forms >= MAX_FREE_FORMS) return null;
     return (
       <Link to="new">
         <button className="btn-primary">Create new form</button>
