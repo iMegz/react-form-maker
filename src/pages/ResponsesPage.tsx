@@ -64,7 +64,7 @@ const ResponsesPage = () => {
       <div>
         <div
           ref={ref}
-          className={`flex relative flex-col gap-4 p-6 bg-white shadow-md w-72${trimmed}`}
+          className={`flex relative flex-col gap-4 p-6 bg-white shadow-md w-64 md:w-72${trimmed}`}
         >
           <button
             onClick={onDelete}
