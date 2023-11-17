@@ -63,7 +63,7 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
   }
 
   return (
-    <div className={`m-auto max-w-[90vw]${preview ? " preview" : ""}`}>
+    <div className={`m-auto max-w-[90vw] mb-5${preview ? " preview" : ""}`}>
       <Form form={formQuery.data?.data!}>
         <Submission.FormInfo />
         <Submission.Questions onSubmit={onSave} />
