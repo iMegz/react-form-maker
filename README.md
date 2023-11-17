@@ -64,6 +64,13 @@ npm run dev
 - **VITE_API :** `"http://localhost:8080/api"`
 - **VITE_ORIGIN :** `"http://localhost:3000"`
 
+## TODO
+
+- **Do some overall code cleaning**
+- **Optimize `Form` component** (Not fully satisfied with it 🙄)
+- **Add backend validation** (I know it is very necessary but I was mainly practicing React with the newly learned tools 😅)
+- **Optimize stats route**
+
 ## Authors
 
 - [Ahmed Magdi](https://github.com/imegz)
