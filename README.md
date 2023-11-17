@@ -1,27 +1,69 @@
-# React + TypeScript + Vite
+# Forms Chief
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Forms Chief** is a web application that allows you to create forms and share it with the ability to use different types of questions
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Client**: TypeScript (React)
+- **Server**: NodeJS (Express)
+- **Database**: MongoDB
+- **Authentication**: Auth0
+- **State Management**: React Query
+- **Schema Validation**: Zod
+- **Payment Processing**: Stripe
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Responsive design
+- Supports 7 Question types, with the ease of adding new question types or add more configrations to existing types
 
-- Configure the top-level `parserOptions` property like this:
+## Run Locally
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+### Server
+
+[GitHub Repo](https://github.com/iMegz/express-form-maker)
+
+#### Installation
+
+```bash
+git clone https://github.com/iMegz/express-form-maker
+cd .\express-form-maker
+npm install
+npm start
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+#### Environment variables
+
+- **AUTH0_DOMAIN :** Auth0 Domain prefixed with `https://`
+- **AUTH0_API_ID :** Auth0 API identifier
+- **AUTH0_CLIENT_ID :** Auth0 Machine to Machine Client ID
+- **AUTH0_CLIENT_SECRET :** Auth0 Machine to Machine client secret
+- **MONGODB_URI :** MongoDB URI
+- **STRIPE_SECRET_KEY :** Stripe secret key
+- **ENDPOINT_SECRET :** Stripe webhook endpoint secret
+- **DEV_MGMT_TOKEN :** _(optional)_ Managment API token for development
+
+### Client
+
+[GitHub Repo](https://github.com/iMegz/react-form-maker)
+
+#### Installation
+
+```bash
+git clone https://github.com/iMegz/react-form-maker
+cd .\react-form-maker
+npm install
+npm run dev
+```
+
+#### Environment variables
+
+- **VITE_AUTH0_DOMAIN :** Auth0 Domain **NOT** prefixed with `https://`
+- **VITE_AUTH0_CLIENT_ID :** Auth0 SPA client id
+- **VITE_AUTH0_API_IDENTIFIER :** Auth0 SPA identifier
+- **VITE_API :** `"http://localhost:8080/api"`
+- **VITE_ORIGIN :** `"http://localhost:3000"`
+
+## Authors
+
+- [Ahmed Magdi](https://github.com/imegz)
