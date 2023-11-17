@@ -4,9 +4,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { features, plans } from "../lib/homePageData";
 import { CheckCircleFilled, CloseCircleFilled } from "@ant-design/icons";
 import { FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
-  const { loginWithRedirect } = useAuth0();
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
 
   function handleSubmitContactForm(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -18,6 +20,20 @@ const HomePage = () => {
       <CheckCircleFilled className="text-green-500" />
     ) : (
       <CloseCircleFilled className="text-red-500" />
+    );
+  }
+
+  function renderButton() {
+    const label = isAuthenticated ? "Dashboard" : "Login";
+    const onClick = () => {
+      if (isAuthenticated) return navigate("/dashboard/");
+      return loginWithRedirect();
+    };
+
+    return (
+      <button className="mt-4 btn-primary w-fit" onClick={onClick}>
+        {label}
+      </button>
     );
   }
 
@@ -39,12 +55,7 @@ const HomePage = () => {
             Unlock the hidden potential within your data through our refined
             form creation and analysis tools
           </h3>
-          <button
-            className="mt-4 btn-primary w-fit"
-            onClick={() => loginWithRedirect()}
-          >
-            Start cooking
-          </button>
+          {renderButton()}
         </div>
         <img src={hero} alt="Hero image" className="hidden w-1/2 lg:block" />
       </div>

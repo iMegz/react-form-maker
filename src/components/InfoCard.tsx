@@ -10,7 +10,7 @@ interface InfoCardProps {
 const InfoCard = ({ color, Icon, title, value }: InfoCardProps) => {
   return (
     <div
-      className="flex flex-col gap-2 p-5 bg-white border-b-4 drop-shadow-md rounded-t-md w-72"
+      className="flex flex-col w-full gap-2 p-5 bg-white border-b-4 drop-shadow-md rounded-t-md sm:w-72"
       style={{ borderBottomColor: color }}
     >
       <h2 className="text-gray-600">{title}</h2>

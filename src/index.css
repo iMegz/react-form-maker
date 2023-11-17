@@ -36,7 +36,7 @@ section {
 }
 
 .container h2 {
-  @apply text-5xl font-light text-center uppercase;
+  @apply text-4xl font-light text-center uppercase md:text-5xl;
 }
 
 .container hr {
@@ -130,7 +130,7 @@ tr {
 }
 
 td {
-  @apply px-6 py-4;
+  @apply p-3 md:py-4 md:px-6;
 }
 
 td:first-of-type {
@@ -138,12 +138,20 @@ td:first-of-type {
 }
 
 /* Forms */
+.max-width {
+  max-width: calc(100vw - 86px) !important;
+}
+
+.preview {
+  @apply min-h-screen py-8 max-width;
+}
+
 .form-holder {
-  @apply flex flex-col w-fit;
+  @apply flex flex-col max-w-full w-fit;
 }
 
 .form-section {
-  @apply relative w-[505px] max-w-[60vw] drop-shadow-lg;
+  @apply relative w-[505px] max-w-full drop-shadow-lg;
 }
 
 .section-header {

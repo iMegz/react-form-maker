@@ -10,7 +10,7 @@ const DashboardLayout = () => {
   return (
     <>
       <DashboardNavbar />
-      <main className="relative w-full p-8 m-2">
+      <main className="relative w-full p-4 md:m-2 md:p-8">
         <Outlet />
       </main>
     </>

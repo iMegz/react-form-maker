@@ -60,13 +60,15 @@ const EditFormPage = () => {
   const form = formQuery.data.data;
 
   return (
-    <FormProvider form={form}>
-      <Edit.FormInfo />
-      <Edit.Sections />
-      <Edit.AddSection />
-      <Edit.Error />
-      <Edit.Save onSave={handleSaveForm} />
-    </FormProvider>
+    <div className="m-auto max-width">
+      <FormProvider form={form}>
+        <Edit.FormInfo />
+        <Edit.Sections />
+        <Edit.AddSection />
+        <Edit.Error />
+        <Edit.Save onSave={handleSaveForm} />
+      </FormProvider>
+    </div>
   );
 };
 

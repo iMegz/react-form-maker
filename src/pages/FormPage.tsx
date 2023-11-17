@@ -63,7 +63,7 @@ const FormPage = ({ preview }: { preview?: boolean }) => {
   }
 
   return (
-    <div className={!preview ? "min-h-screen py-8 m-auto " : ""}>
+    <div className={`m-auto max-w-[90vw]${preview ? " preview" : ""}`}>
       <Form form={formQuery.data?.data!}>
         <Submission.FormInfo />
         <Submission.Questions onSubmit={onSave} />
